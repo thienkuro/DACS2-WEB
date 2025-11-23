@@ -1,7 +1,7 @@
 // public/js/header.js
 class HeaderManager {
     constructor() {
-        this.API_URL = 'http://localhost:3000/api/auth'; // Backend Node.js
+        this.API_URL = 'http://127.0.0.1:3000/api/auth'; // Backend Node.js
         this.user = null;
         this.init();
     }
@@ -43,6 +43,7 @@ class HeaderManager {
         // Nếu đã đăng nhập → không cần hover popup nữa
         if (this.user) {
             this.updateUserUI();
+            this.bindAvatarHoverEvents(); // Thêm hover cho avatar dropdown
             return;
         }
 
@@ -64,6 +65,47 @@ class HeaderManager {
         container.addEventListener('mouseleave', hide);
         popup.addEventListener('mouseenter', show);
         popup.addEventListener('mouseleave', hide);
+    }
+
+    // === Mới thêm: Hover cho avatar dropdown với delay ===
+    bindAvatarHoverEvents() {
+        const avatar = document.querySelector('.user-avatar');
+        const dropdown = document.querySelector('.user-dropdown');
+        if (!avatar || !dropdown) return;
+
+        let isHovering = false;
+
+        const showDropdown = () => {
+            isHovering = true;
+            dropdown.style.display = 'block';
+            dropdown.style.opacity = '1';
+            dropdown.style.transform = 'translateY(0)';
+        };
+
+        const hideDropdown = () => {
+            isHovering = false;
+            setTimeout(() => {
+                if (!isHovering) {
+                    dropdown.style.display = 'none';
+                    dropdown.style.opacity = '0';
+                    dropdown.style.transform = 'translateY(-10px)';
+                }
+            }, 100); // Delay nhỏ để chuột di chuyển từ avatar sang dropdown
+        };
+
+        // Khi chuột vào avatar hoặc dropdown → hiện
+        avatar.addEventListener('mouseenter', showDropdown);
+        dropdown.addEventListener('mouseenter', showDropdown);
+
+        // Chỉ khi chuột rời cả 2 → mới tắt
+        avatar.addEventListener('mouseleave', () => {
+            // Kiểm tra xem chuột có đang ở trong dropdown không
+            if (!dropdown.matches(':hover')) {
+                hideDropdown();
+            }
+        });
+
+        dropdown.addEventListener('mouseleave', hideDropdown);
     }
 
     bindModalEvents() {
@@ -116,6 +158,7 @@ class HeaderManager {
                 alert('Đăng ký thành công! Chào ' + username);
                 this.user = username;
                 this.updateUserUI();
+                this.bindAvatarHoverEvents(); // Gán lại hover cho avatar mới
                 this.closeModal();
             } else {
                 alert(data.error || 'Đăng ký thất bại');
@@ -146,6 +189,7 @@ class HeaderManager {
                 alert('Đăng nhập thành công! Chào ' + data.user.username);
                 this.user = data.user.username;
                 this.updateUserUI();
+                this.bindAvatarHoverEvents(); // Gán lại hover cho avatar mới
                 this.closeModal();
             } else {
                 alert(data.error || 'Sai email hoặc mật khẩu');
@@ -192,7 +236,7 @@ class HeaderManager {
                     <button type="submit" class="submit-btn">ĐĂNG NHẬP</button>
                 </form>
                 <p style="margin-top:15px; text-align:center">
-                    Chưa có tài khoản? <a href="#" onclick="headerManager.showRegister(); headerManager.closeModal()">Đăng ký</a>
+                    Chưa có tài khoản? <a href="#" onclick="headerManager.showRegister()">Đăng ký</a>
                 </p>
             </div>`;
     }
@@ -209,7 +253,7 @@ class HeaderManager {
                     <button type="submit" class="submit-btn">TẠO TÀI KHOẢN</button>
                 </form>
                 <p style="margin-top:15px; text-align:center">
-                    Đã có tài khoản? <a href="#" onclick="headerManager.showLogin(); headerManager.closeModal()">Đăng nhập</a>
+                    Đã có tài khoản? <a href="#" onclick="headerManager.showLogin()">Đăng nhập</a>
                 </p>
             </div>`;
     }
