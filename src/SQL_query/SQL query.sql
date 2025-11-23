@@ -142,3 +142,23 @@ INSERT INTO ProductImages (product_id, type, url) VALUES
 ((SELECT product_id FROM Products WHERE name='Logitech G Pro X Headset'), 'static', 'https://via.placeholder.com/480x360?text=G+Pro+X+Headset'),
 ((SELECT product_id FROM Products WHERE name='SteelSeries Arctis Nova 7'), 'static', 'https://via.placeholder.com/480x360?text=Arctis+Nova+7'),
 ((SELECT product_id FROM Products WHERE name='Razer BlackShark V2'), 'static', 'https://via.placeholder.com/480x360?text=BlackShark+V2');
+
+-- Thêm 1 sản phẩm mỗi danh mục để đủ 5 sp/nhóm
+USE gaming_store;
+-- Products bổ sung
+INSERT INTO Products (name, description, price, category_id) VALUES
+('Zowie EC2-CW', 'Chuột không dây hiệu năng cao, cảm biến tiên tiến, tối ưu cho eSports', 2890000, (SELECT category_id FROM Categories WHERE name='Chuột')),
+('Leopold FC750R', 'Bàn phím cơ TKL build chắc chắn, keycap PBT, cảm giác gõ premium', 2590000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
+('Corsair HS80 RGB Wireless', 'Tai nghe không dây, âm thanh Dolby, micro chất lượng, thiết kế thoải mái', 2990000, (SELECT category_id FROM Categories WHERE name='Tai nghe'));
+
+-- Inventory bổ sung
+INSERT INTO Inventory (product_id, quantity) VALUES
+((SELECT product_id FROM Products WHERE name='Zowie EC2-CW'), 22),
+((SELECT product_id FROM Products WHERE name='Leopold FC750R'), 26),
+((SELECT product_id FROM Products WHERE name='Corsair HS80 RGB Wireless'), 20);
+
+-- ProductImages bổ sung (placeholder)
+INSERT INTO ProductImages (product_id, type, url) VALUES
+((SELECT product_id FROM Products WHERE name='Zowie EC2-CW'), 'static', 'https://via.placeholder.com/480x360?text=Zowie+EC2-CW'),
+((SELECT product_id FROM Products WHERE name='Leopold FC750R'), 'static', 'https://via.placeholder.com/480x360?text=Leopold+FC750R'),
+((SELECT product_id FROM Products WHERE name='Corsair HS80 RGB Wireless'), 'static', 'https://via.placeholder.com/480x360?text=HS80+RGB+Wireless');

@@ -13,7 +13,6 @@
         catch { return n + ' đ'; }
     }
 
-    // Map UI section titles to category names from DB
     const CATEGORY_MAP = {
         'Chuột': ['Chuột', 'Mouse', 'Chuột + Lót chuột'],
         'Bàn phím': ['Bàn phím', 'Keyboard'],
@@ -24,14 +23,14 @@
         const res = await fetch('data/products.json', { cache: 'no-store' });
         if (!res.ok) throw new Error('Không tải được products.json');
         const data = await res.json();
-        return data.products || [];
+        return Array.isArray(data) ? data : (data.products || []);
     }
 
     function renderIntoSection(sectionEl, products) {
         const grid = sectionEl.querySelector('.product-grid');
         if (!grid) return;
 
-        const html = products.slice(0, 10).map(p => {
+        const html = products.slice(0, 5).map(p => {
             const img = p.primaryImage || (p.images && p.images[0] && p.images[0].url) || '';
             const name = escapeHTML(p.name || '');
             const price = formatPrice(p.price || 0);
@@ -39,10 +38,10 @@
             const alt = name;
             const fallback = 'https://via.placeholder.com/480x360?text=No+Image';
             return `
-        <a class="product-item" href="#" title="${name}">
-          ${img ? `<img src="${safeImg}" alt="${alt}" loading="lazy" decoding="async" width="480" height="360" onerror="this.onerror=null;this.src='${fallback}';">` : ''}
-          <p>${name}<br><strong>${price}</strong></p>
-        </a>`;
+                <a class="product-item" href="#" title="${name}">
+                    ${img ? `<img src="${safeImg}" alt="${alt}" loading="lazy" decoding="async" width="480" height="360" onerror="this.onerror=null;this.src='${fallback}';">` : ''}
+                    <p>${name}<br><strong>${price}</strong></p>
+                </a>`;
         }).join('');
 
         grid.innerHTML = html || '<p>Chưa có sản phẩm.</p>';
@@ -65,6 +64,5 @@
         }
     }
 
-    // expose for calling after mainContent is loaded
     window.initProducts = initProducts;
 })();

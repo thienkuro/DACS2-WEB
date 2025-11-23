@@ -22,6 +22,7 @@
     <!-- Load Components -->
     <script src="js/menu.js"></script>
     <script src="js/search.js"></script>
+    <script src="js/productsFeed.js"></script>
     <script>
         function loadHTML(elementId, file, callback) {
             fetch(file)
@@ -164,7 +165,7 @@
         });
         loadHTML("footer-placeholder", "component/footer.html");
         loadHTML("mainContent-placeholder", "component/mainContent.html", () => {
-            // adjustRelativePaths("mainContent-placeholder", "../HTML/Layout/"); // Uncomment if needed
+            if (window.initProducts) window.initProducts();
         });
     </script>
 

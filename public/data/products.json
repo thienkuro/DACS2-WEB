@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-11-23T12:24:24.400Z",
+  "updatedAt": "2025-11-23T14:13:03.066Z",
   "products": [
     {
       "id": 4,
@@ -204,6 +204,57 @@
         }
       ],
       "primaryImage": "https://via.placeholder.com/480x360?text=BlackShark+V2"
+    },
+    {
+      "id": 16,
+      "name": "Zowie EC2-CW",
+      "description": "Chuột không dây hiệu năng cao, cảm biến tiên tiến, tối ưu cho eSports",
+      "price": 2890000,
+      "categoryId": 10,
+      "category": "Chuột",
+      "quantity": 22,
+      "images": [
+        {
+          "id": 14,
+          "type": "static",
+          "url": "https://via.placeholder.com/480x360?text=Zowie+EC2-CW"
+        }
+      ],
+      "primaryImage": "https://via.placeholder.com/480x360?text=Zowie+EC2-CW"
+    },
+    {
+      "id": 17,
+      "name": "Leopold FC750R",
+      "description": "Bàn phím cơ TKL build chắc chắn, keycap PBT, cảm giác gõ premium",
+      "price": 2590000,
+      "categoryId": 11,
+      "category": "Bàn phím",
+      "quantity": 26,
+      "images": [
+        {
+          "id": 15,
+          "type": "static",
+          "url": "https://via.placeholder.com/480x360?text=Leopold+FC750R"
+        }
+      ],
+      "primaryImage": "https://via.placeholder.com/480x360?text=Leopold+FC750R"
+    },
+    {
+      "id": 18,
+      "name": "Corsair HS80 RGB Wireless",
+      "description": "Tai nghe không dây, âm thanh Dolby, micro chất lượng, thiết kế thoải mái",
+      "price": 2990000,
+      "categoryId": 12,
+      "category": "Tai nghe",
+      "quantity": 20,
+      "images": [
+        {
+          "id": 16,
+          "type": "static",
+          "url": "https://via.placeholder.com/480x360?text=HS80+RGB+Wireless"
+        }
+      ],
+      "primaryImage": "https://via.placeholder.com/480x360?text=HS80+RGB+Wireless"
     }
   ]
 }

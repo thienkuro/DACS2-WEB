@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-<<<<<<< HEAD
     <file url="file://$PROJECT_DIR$/src/SQL_query/SQL query.sql" value="1cd2c435-42cf-452d-9ce0-5794871e1dd0" />
-=======
-    <file url="file://$USER_HOME$/AppData/Local/Temp/Zalo Temp/TempDownloads/SQL query.sql" value="1cd2c435-42cf-452d-9ce0-5794871e1dd0" />
->>>>>>> 8edfb6cad3712bc4ca8e45fb731c7644c011e2ae
   </component>
 </project>
