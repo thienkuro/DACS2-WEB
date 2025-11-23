@@ -1,16 +1,19 @@
-// js/header.js
+// public/js/header.js
 class HeaderManager {
     constructor() {
+        this.API_URL = 'http://localhost:3000/api/auth'; // Backend Node.js
+        this.user = null;
         this.init();
     }
 
-    init() {
-        // Đợi header được load vào DOM rồi mới chạy
+    async init() {
+        await this.checkLoginStatus(); // Kiểm tra đã login chưa ngay khi khởi động
+
+        // Đợi header được load vào DOM
         if (document.getElementById('header-placeholder')?.innerHTML.trim()) {
             this.setup();
         } else {
-            // Nếu header chưa load xong → quan sát DOM
-            const observer = new MutationObserver((mutations, obs) => {
+            const observer = new MutationObserver((_, obs) => {
                 if (document.querySelector('.login-container')) {
                     this.setup();
                     obs.disconnect();
@@ -23,7 +26,26 @@ class HeaderManager {
         }
     }
 
+    async checkLoginStatus() {
+        try {
+            const res = await fetch(`${this.API_URL}/check`, { credentials: 'include' });
+            const data = await res.json();
+            if (data.logged_in) {
+                this.user = data.username;
+                this.updateUserUI(); // Hiển thị avatar ngay lập tức
+            }
+        } catch (err) {
+            console.error('Check login failed:', err);
+        }
+    }
+
     setup() {
+        // Nếu đã đăng nhập → không cần hover popup nữa
+        if (this.user) {
+            this.updateUserUI();
+            return;
+        }
+
         this.bindHoverEvents();
         this.bindModalEvents();
         console.log("Header script đã được khởi chạy thành công!");
@@ -32,17 +54,16 @@ class HeaderManager {
     bindHoverEvents() {
         const container = document.querySelector('.login-container');
         const popup = document.getElementById('loginPopup');
-        let timeout;
+        if (!container || !popup) return;
 
+        let timeout;
         const show = () => { clearTimeout(timeout); popup.style.display = 'block'; };
         const hide = () => { timeout = setTimeout(() => popup.style.display = 'none', 200); };
 
-        if (container && popup) {
-            container.addEventListener('mouseenter', show);
-            container.addEventListener('mouseleave', hide);
-            popup.addEventListener('mouseenter', show);
-            popup.addEventListener('mouseleave', hide);
-        }
+        container.addEventListener('mouseenter', show);
+        container.addEventListener('mouseleave', hide);
+        popup.addEventListener('mouseenter', show);
+        popup.addEventListener('mouseleave', hide);
     }
 
     bindModalEvents() {
@@ -54,13 +75,8 @@ class HeaderManager {
         });
     }
 
-    showLogin() {
-        this.openModal(this.getLoginHTML(), 'modallogin');
-    }
-
-    showRegister() {
-        this.openModal(this.getRegisterHTML(), 'modalregis');
-    }
+    showLogin() { this.openModal(this.getLoginHTML(), 'modallogin'); }
+    showRegister() { this.openModal(this.getRegisterHTML(), 'modalregis'); }
 
     openModal(content, className) {
         const overlay = document.getElementById('authModalOverlay');
@@ -71,50 +87,135 @@ class HeaderManager {
     closeModal() {
         const overlay = document.getElementById('authModalOverlay');
         overlay.classList.remove('active');
-        overlay.innerHTML = '';
+        setTimeout(() => overlay.innerHTML = '', 300); // Delay để animation mượt
     }
 
+    // === XỬ LÝ ĐĂNG KÝ ===
+    async handleRegister(e) {
+        e.preventDefault();
+        const form = e.target;
+        const email = form.querySelector('input[type="email"]').value.trim();
+        const username = form.querySelector('input[placeholder="Tên người dùng"]').value.trim();
+        const password = form.querySelector('input[type="password"]').value;
+
+        if (!email || !username || !password) {
+            alert('Vui lòng điền đầy đủ thông tin');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${this.API_URL}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email, username, password })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                alert('Đăng ký thành công! Chào ' + username);
+                this.user = username;
+                this.updateUserUI();
+                this.closeModal();
+            } else {
+                alert(data.error || 'Đăng ký thất bại');
+            }
+        } catch (err) {
+            alert('Lỗi kết nối server');
+            console.error(err);
+        }
+    }
+
+    // === XỬ LÝ ĐĂNG NHẬP ===
+    async handleLogin(e) {
+        e.preventDefault();
+        const form = e.target;
+        const email = form.querySelector('input[type="email"]').value.trim();
+        const password = form.querySelector('input[type="password"]').value;
+
+        try {
+            const res = await fetch(`${this.API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                alert('Đăng nhập thành công! Chào ' + data.user.username);
+                this.user = data.user.username;
+                this.updateUserUI();
+                this.closeModal();
+            } else {
+                alert(data.error || 'Sai email hoặc mật khẩu');
+            }
+        } catch (err) {
+            alert('Lỗi kết nối server');
+            console.error(err);
+        }
+    }
+
+    // === ĐĂNG XUẤT ===
+    async logout() {
+        await fetch(`${this.API_URL}/logout`, { method: 'POST', credentials: 'include' });
+        this.user = null;
+        location.reload(); // Reload để về trạng thái chưa đăng nhập
+    }
+
+    // === CẬP NHẬT GIAO DIỆN KHI ĐÃ ĐĂNG NHẬP ===
+    updateUserUI() {
+        const container = document.querySelector('.login-container');
+        if (!container) return;
+
+        const firstLetter = this.user.charAt(0).toUpperCase();
+
+        container.innerHTML = `
+            <div class="user-avatar" title="Xin chào, ${this.user}">
+                <span>${firstLetter}</span>
+                <div class="user-dropdown">
+                    <p>Xin chào, <strong>${this.user}</strong></p>
+                    <button onclick="headerManager.logout()" class="logout-btn">Đăng xuất</button>
+                </div>
+            </div>
+        `;
+    }
+
+    // === HTML MODAL ĐĂNG NHẬP ===
     getLoginHTML() {
         return `
             <div class="modal-content">
-                <h2 style="text-align:center;margin-bottom:20px">ĐĂNG NHẬP TÀI KHOẢN</h2>
-                <form onsubmit="event.preventDefault()">
+                <h2 style="text-align:center;margin-bottom:20px">ĐĂNG NHẬP</h2>
+                <form onsubmit="headerManager.handleLogin(event)">
                     <div class="input-container"><i class='bx bx-envelope'></i><input type="email" placeholder="Email" required></div>
                     <div class="input-container"><i class='bx bx-lock'></i><input type="password" placeholder="Mật khẩu" required></div>
-                    <a href="#" style="display:block;text-align:right;margin:10px 0"><u>Quên mật khẩu?</u></a>
-                    <button type="submit" style="width:100%;padding:12px;background:#e63946;color:white;border:none;border-radius:6px"><b>ĐĂNG NHẬP</b></button>
+                    <button type="submit" class="submit-btn">ĐĂNG NHẬP</button>
                 </form>
-                <div style="margin:20px 0;position:relative;text-align:center"><hr style="border:none;border-top:1px solid #ddd"><span style="background:white;padding:0 10px;position:absolute;top:-10px;left:50%;transform:translateX(-50%)">hoặc đăng nhập bằng</span></div>
-                <div class="social-buttons">
-                    <button class="google"><i class='bx bxl-google'></i> Google</button>
-                    <button class="facebook"><i class='bx bxl-facebook'></i> Facebook</button>
-                </div>
-                <p style="margin-top:20px">Chưa có tài khoản? <a href="#" onclick="headerManager.showRegister()">Đăng ký ngay!</a></p>
+                <p style="margin-top:15px; text-align:center">
+                    Chưa có tài khoản? <a href="#" onclick="headerManager.showRegister(); headerManager.closeModal()">Đăng ký</a>
+                </p>
             </div>`;
     }
 
+    // === HTML MODAL ĐĂNG KÝ ===
     getRegisterHTML() {
         return `
             <div class="modal-content-regis">
                 <h2 style="text-align:center;margin-bottom:20px">ĐĂNG KÝ TÀI KHOẢN</h2>
-                <form onsubmit="event.preventDefault()">
+                <form onsubmit="headerManager.handleRegister(event)">
                     <div class="input-container"><i class='bx bx-envelope'></i><input type="email" placeholder="Email" required></div>
-                    <div class="input-container"><i class='bx bx-user'></i><input type="text" placeholder="Họ" required></div>
-                    <div class="input-container"><i class='bx bx-user'></i><input type="text" placeholder="Tên" required></div>
+                    <div class="input-container"><i class='bx bx-user'></i><input type="text" placeholder="Tên người dùng" required></div>
                     <div class="input-container"><i class='bx bx-lock'></i><input type="password" placeholder="Mật khẩu" required></div>
-                    <button type="submit" style="width:100%;padding:12px;background:#e63946;color:white;border:none;border-radius:6px;margin-top:15px"><b>TẠO TÀI KHOẢN</b></button>
+                    <button type="submit" class="submit-btn">TẠO TÀI KHOẢN</button>
                 </form>
-                <div style="margin:20px 0;position:relative;text-align:center"><hr style="border:none;border-top:1px solid #ddd"><span style="background:white;padding:0 10px;position:absolute;top:-10px;left:50%;transform:translateX(-50%)">hoặc đăng ký bằng</span></div>
-                <div class="social-buttons">
-                    <button class="google"><i class='bx bxl-google'></i> Google</button>
-                    <button class="facebook"><i class='bx bxl-facebook'></i> Facebook</button>
-                </div>
-                <p style="margin-top:20px">Đã có tài khoản? <a href="#" onclick="headerManager.showLogin()">Đăng nhập</a></p>
+                <p style="margin-top:15px; text-align:center">
+                    Đã có tài khoản? <a href="#" onclick="headerManager.showLogin(); headerManager.closeModal()">Đăng nhập</a>
+                </p>
             </div>`;
     }
 }
 
-// Khởi động khi DOM sẵn sàng + header đã được load
+// Khởi động toàn bộ
 document.addEventListener('DOMContentLoaded', () => {
     window.headerManager = new HeaderManager();
 });
