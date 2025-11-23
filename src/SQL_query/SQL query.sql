@@ -31,7 +31,8 @@ CREATE TABLE Categories (
 -- ==============================
 CREATE TABLE Products (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    product_code VARCHAR(20) NOT NULL UNIQUE, -- Mã quy ước: MLT01, KKC01...
+    name VARCHAR(100) NOT NULL,               -- Tên hiển thị đầy đủ
     description TEXT,
     price DECIMAL(10,2) NOT NULL,
     category_id INT,
@@ -95,21 +96,21 @@ INSERT INTO Categories (name, description) VALUES
 ('Tai nghe', 'Tai nghe gaming âm thanh sống động, đàm thoại rõ');
 
 -- Products (tham chiếu Category qua subquery để tránh lệ thuộc ID)
-INSERT INTO Products (name, description, price, category_id) VALUES
-('Logitech G Pro X Superlight 2', 'Chuột siêu nhẹ cho eSports, cảm biến Hero 2, độ chính xác cao', 3490000, (SELECT category_id FROM Categories WHERE name='Chuột')),
-('Razer DeathAdder V3', 'Thiết kế công thái học, cảm biến Focus Pro 30K, switch quang học Gen-3', 2590000, (SELECT category_id FROM Categories WHERE name='Chuột')),
-('Glorious Model O Wireless', 'Chuột tổ ong không dây nhẹ, cảm biến BAMF, thời lượng pin dài', 2190000, (SELECT category_id FROM Categories WHERE name='Chuột')),
-('Xtrfy M8 Wireless', 'Chuột siêu nhẹ, cảm biến PixArt cao cấp, build chắc chắn', 2790000, (SELECT category_id FROM Categories WHERE name='Chuột')),
+INSERT INTO Products (product_code, name, description, price, category_id) VALUES
+('MLT01', 'Logitech G Pro X Superlight 2', 'Chuột siêu nhẹ cho eSports, cảm biến Hero 2, độ chính xác cao', 3490000, (SELECT category_id FROM Categories WHERE name='Chuột')),
+('MRZ01', 'Razer DeathAdder V3', 'Thiết kế công thái học, cảm biến Focus Pro 30K, switch quang học Gen-3', 2590000, (SELECT category_id FROM Categories WHERE name='Chuột')),
+('MGL01', 'Glorious Model O Wireless', 'Chuột tổ ong không dây nhẹ, cảm biến BAMF, thời lượng pin dài', 2190000, (SELECT category_id FROM Categories WHERE name='Chuột')),
+('MXF01', 'Xtrfy M8 Wireless', 'Chuột siêu nhẹ, cảm biến PixArt cao cấp, build chắc chắn', 2790000, (SELECT category_id FROM Categories WHERE name='Chuột')),
 
-('Keychron K2 V2', 'Bàn phím cơ 75%, hot-swap, Bluetooth/USB-C, keycap ABS', 1890000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
-('Akko 3068B Plus', 'Bàn phím 65%, switch Akko, triple-mode (2.4G/Bluetooth/USB)', 1590000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
-('Ducky One 3 TKL', 'Bàn phím TKL, hot-swap, foam tiêu âm, keycap PBT Double-shot', 2590000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
-('NuPhy Air75', 'Bàn phím low-profile 75%, kết nối đa thiết bị, mỏng nhẹ', 2690000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
+('KKC01', 'Keychron K2 V2', 'Bàn phím cơ 75%, hot-swap, Bluetooth/USB-C, keycap ABS', 1890000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
+('KAK01', 'Akko 3068B Plus', 'Bàn phím 65%, switch Akko, triple-mode (2.4G/Bluetooth/USB)', 1590000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
+('KDK01', 'Ducky One 3 TKL', 'Bàn phím TKL, hot-swap, foam tiêu âm, keycap PBT Double-shot', 2590000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
+('KNP01', 'NuPhy Air75', 'Bàn phím low-profile 75%, kết nối đa thiết bị, mỏng nhẹ', 2690000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
 
-('HyperX Cloud II', 'Tai nghe gaming huyền thoại, âm thanh 7.1, microphone khử ồn', 1590000, (SELECT category_id FROM Categories WHERE name='Tai nghe')),
-('Logitech G Pro X Headset', 'Tai nghe chuyên nghiệp, Blue VO!CE, âm thanh chi tiết', 2490000, (SELECT category_id FROM Categories WHERE name='Tai nghe')),
-('SteelSeries Arctis Nova 7', 'Tai nghe không dây đa nền tảng, pin bền, tiện lợi', 3990000, (SELECT category_id FROM Categories WHERE name='Tai nghe')),
-('Razer BlackShark V2', 'Âm thanh TriForce Titanium 50mm, microphone USB card', 2190000, (SELECT category_id FROM Categories WHERE name='Tai nghe'));
+('HHX01', 'HyperX Cloud II', 'Tai nghe gaming huyền thoại, âm thanh 7.1, microphone khử ồn', 1590000, (SELECT category_id FROM Categories WHERE name='Tai nghe')),
+('HLT01', 'Logitech G Pro X Headset', 'Tai nghe chuyên nghiệp, Blue VO!CE, âm thanh chi tiết', 2490000, (SELECT category_id FROM Categories WHERE name='Tai nghe')),
+('HSS01', 'SteelSeries Arctis Nova 7', 'Tai nghe không dây đa nền tảng, pin bền, tiện lợi', 3990000, (SELECT category_id FROM Categories WHERE name='Tai nghe')),
+('HRZ01', 'Razer BlackShark V2', 'Âm thanh TriForce Titanium 50mm, microphone USB card', 2190000, (SELECT category_id FROM Categories WHERE name='Tai nghe'));
 
 -- Inventory
 INSERT INTO Inventory (product_id, quantity) VALUES
@@ -146,10 +147,10 @@ INSERT INTO ProductImages (product_id, type, url) VALUES
 -- Thêm 1 sản phẩm mỗi danh mục để đủ 5 sp/nhóm
 USE gaming_store;
 -- Products bổ sung
-INSERT INTO Products (name, description, price, category_id) VALUES
-('Zowie EC2-CW', 'Chuột không dây hiệu năng cao, cảm biến tiên tiến, tối ưu cho eSports', 2890000, (SELECT category_id FROM Categories WHERE name='Chuột')),
-('Leopold FC750R', 'Bàn phím cơ TKL build chắc chắn, keycap PBT, cảm giác gõ premium', 2590000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
-('Corsair HS80 RGB Wireless', 'Tai nghe không dây, âm thanh Dolby, micro chất lượng, thiết kế thoải mái', 2990000, (SELECT category_id FROM Categories WHERE name='Tai nghe'));
+INSERT INTO Products (product_code, name, description, price, category_id) VALUES
+('MZW01', 'Zowie EC2-CW', 'Chuột không dây hiệu năng cao, cảm biến tiên tiến, tối ưu cho eSports', 2890000, (SELECT category_id FROM Categories WHERE name='Chuột')),
+('KLP01', 'Leopold FC750R', 'Bàn phím cơ TKL build chắc chắn, keycap PBT, cảm giác gõ premium', 2590000, (SELECT category_id FROM Categories WHERE name='Bàn phím')),
+('HCR01', 'Corsair HS80 RGB Wireless', 'Tai nghe không dây, âm thanh Dolby, micro chất lượng, thiết kế thoải mái', 2990000, (SELECT category_id FROM Categories WHERE name='Tai nghe'));
 
 -- Inventory bổ sung
 INSERT INTO Inventory (product_id, quantity) VALUES
@@ -162,3 +163,4 @@ INSERT INTO ProductImages (product_id, type, url) VALUES
 ((SELECT product_id FROM Products WHERE name='Zowie EC2-CW'), 'static', 'https://via.placeholder.com/480x360?text=Zowie+EC2-CW'),
 ((SELECT product_id FROM Products WHERE name='Leopold FC750R'), 'static', 'https://via.placeholder.com/480x360?text=Leopold+FC750R'),
 ((SELECT product_id FROM Products WHERE name='Corsair HS80 RGB Wireless'), 'static', 'https://via.placeholder.com/480x360?text=HS80+RGB+Wireless');
+

@@ -24,21 +24,22 @@ async function main() {
 
         const [rows] = await conn.execute(
             `SELECT 
-         p.product_id,
-         p.name,
-         p.description,
-         p.price,
-         p.category_id,
-         c.name AS category,
-         i.quantity,
-         img.image_id,
-         img.type AS img_type,
-         img.url AS img_url
-       FROM Products p
-       LEFT JOIN Categories c ON p.category_id = c.category_id
-       LEFT JOIN Inventory i ON i.product_id = p.product_id
-       LEFT JOIN ProductImages img ON img.product_id = p.product_id
-       ORDER BY p.product_id`
+                 p.product_id,
+                 p.product_code,
+                 p.name,
+                 p.description,
+                 p.price,
+                 p.category_id,
+                 c.name AS category,
+                 i.quantity,
+                 img.image_id,
+                 img.type AS img_type,
+                 img.url AS img_url
+             FROM Products p
+             LEFT JOIN Categories c ON p.category_id = c.category_id
+             LEFT JOIN Inventory i ON i.product_id = p.product_id
+             LEFT JOIN ProductImages img ON img.product_id = p.product_id
+             ORDER BY p.product_id`
         );
 
         // Group by product
@@ -47,6 +48,7 @@ async function main() {
             if (!byId.has(r.product_id)) {
                 byId.set(r.product_id, {
                     id: r.product_id,
+                    code: r.product_code || null,
                     name: r.name,
                     description: r.description || '',
                     price: Number(r.price),
