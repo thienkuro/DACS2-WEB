@@ -760,3 +760,76 @@ a {
     text-decoration: none;
     color: blue;
 }
+.auth-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.auth-modal-overlay.active {
+    display: flex;
+}
+
+.popup {
+    display: none;
+    position: absolute;
+    top: 80px;
+    right: 10px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    width: 300px;
+    z-index: 1000;
+    text-align: center;
+}
+
+/* Title */
+.popup h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #000;
+}
+
+.popup h3 i {
+    color: #ff6600;
+    margin-right: 5px;
+}
+
+/* Buttons */
+.popup .btn {
+    width: 90%;
+    margin: 5px auto;
+    padding: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    font-size: 14px;
+    background: red;
+    color: white;
+
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.popup .btn i {
+    font-size: 16px;
+}
+
+.btn:hover {
+    background: darkred;
+}
+
+/* Show popup when hovering login container */
+.login-container:hover .popup {
+    display: block;
+}

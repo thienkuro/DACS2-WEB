@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/6c9eb02a-f3c1-4434-bc3c-439ae59e3c27/console.sql" value="6c9eb02a-f3c1-4434-bc3c-439ae59e3c27" />
+    <file url="file://$USER_HOME$/AppData/Local/Temp/Zalo Temp/TempDownloads/SQL query.sql" value="1cd2c435-42cf-452d-9ce0-5794871e1dd0" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/1cd2c435-42cf-452d-9ce0-5794871e1dd0/console.sql" value="1cd2c435-42cf-452d-9ce0-5794871e1dd0" />
   </component>
 </project>
