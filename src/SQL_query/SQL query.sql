@@ -47,7 +47,7 @@ CREATE TABLE ProductImages (
     image_id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
     type ENUM('static','animated') NOT NULL,
-    url VARCHAR(255) NOT NULL,
+    url VARCHAR(1000) NOT NULL,
     FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE CASCADE
 );
 
@@ -129,20 +129,20 @@ INSERT INTO Inventory (product_id, quantity) VALUES
 
 -- ProductImages (static placeholders; có thể thay bằng URL ảnh thật trong thư mục public)
 INSERT INTO ProductImages (product_id, type, url) VALUES
-((SELECT product_id FROM Products WHERE name='Logitech G Pro X Superlight 2'), 'static', 'https://via.placeholder.com/480x360?text=G+Pro+X+SL2'),
-((SELECT product_id FROM Products WHERE name='Razer DeathAdder V3'), 'static', 'https://via.placeholder.com/480x360?text=DeathAdder+V3'),
-((SELECT product_id FROM Products WHERE name='Glorious Model O Wireless'), 'static', 'https://via.placeholder.com/480x360?text=Model+O+Wireless'),
-((SELECT product_id FROM Products WHERE name='Xtrfy M8 Wireless'), 'static', 'https://via.placeholder.com/480x360?text=Xtrfy+M8'),
+((SELECT product_id FROM Products WHERE name='Logitech G Pro X Superlight 2'), 'static', 'https://imgs.search.brave.com/9ObE9aWQBCC1nwd7ZSdqJSAthSUS_breGhK4omXZcDs/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4u/bW9zLmNtcy5mdXR1/cmVjZG4ubmV0L3c4/QmpGcXdNNFN1ZnRM/VGFYMnpXZ0YucG5n'),
+((SELECT product_id FROM Products WHERE name='Razer DeathAdder V3'), 'static', 'https://imgs.search.brave.com/s_W2T3Zo_Y4NMJn_QM9f47HFDziOGM4SQ-PsaA4uGTc/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4u/aWRlYWxvLmNvbS9m/b2xkZXIvUHJvZHVj/dC8yMDIzNDEvMy8y/MDIzNDEzNDUvczFf/cHJvZHVrdGJpbGRf/bWF4XzEwL3JhemVy/LWRlYXRoYWRkZXIt/djMuanBn'),
+((SELECT product_id FROM Products WHERE name='Glorious Model O Wireless'), 'static', 'https://imgs.search.brave.com/1i-H-i8CFp0rxUezqL2sqK4WoZRJuxwgZJlu50y7eGM/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4u/dGhlZnBzcmV2aWV3/LmNvbS93cC1jb250/ZW50L3VwbG9hZHMv/MjAyMi8wMS9HbG9y/aW91cy1Nb2RlbC1P/LVdpcmVsZXNzLXJl/YXItcmlnaHQtc2Nh/bGVkLmpwZy53ZWJw'),
+((SELECT product_id FROM Products WHERE name='Xtrfy M8 Wireless'), 'static', 'https://imgs.search.brave.com/S2paMsJPSkBuzVWyb0mUuP_8EFZmorX9fX6OLESlNa0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/aW5zdGluY3RnYW1p/bmcuZ2cvMjQ1MjUt/bWVkaXVtX2RlZmF1/bHQvTThXLUJMQUNL/LndlYnA'),
 
-((SELECT product_id FROM Products WHERE name='Keychron K2 V2'), 'static', 'https://via.placeholder.com/480x360?text=Keychron+K2+V2'),
-((SELECT product_id FROM Products WHERE name='Akko 3068B Plus'), 'static', 'https://via.placeholder.com/480x360?text=Akko+3068B+Plus'),
-((SELECT product_id FROM Products WHERE name='Ducky One 3 TKL'), 'static', 'https://via.placeholder.com/480x360?text=Ducky+One+3+TKL'),
-((SELECT product_id FROM Products WHERE name='NuPhy Air75'), 'static', 'https://via.placeholder.com/480x360?text=NuPhy+Air75'),
+((SELECT product_id FROM Products WHERE name='Keychron K2 V2'), 'static', 'https://imgs.search.brave.com/wMPkwPZ7BmZo5g9JhWsr2HKQskOE6GX_3W4eHbbSetE/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4u/c2hvcGlmeS5jb20v/cy9maWxlcy8xLzAw/NTkvMDYzMC8xMDE3/L3QvNS9hc3NldHMv/a2V5Y2hyb25rMmhv/dHN3YXBwYWJsZXdp/cmVsZXNzbWVjaGFu/aWNhbGtleWJvYXJk/MS0xNjQ2ODE0Njkx/MzQ4LmpwZz92PTE2/NDY4MTQ3MDY'),
+((SELECT product_id FROM Products WHERE name='Akko 3068B Plus'), 'static', 'https://imgs.search.brave.com/QRKMFeenCaKrAfpl89VeFwifkoD7vxRi-Kn3jqgPNf8/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudGNkbi5jb20u/YnIvaW1nL2ltZ19w/cm9kLzM3NDEyMy90/ZWNsYWRvX21lY2Fu/aWNvXzMwNjhiX3Bs/dXNfYmxhY2tfZV9j/eWFuX3JnYl9hbnNp/X3N3aXRjaF9qZWxs/eV9waW5rX2Fra29f/Mzc2NDhfNl9hYjQz/N2JmN2RiOTU5YzQy/NzU1MjBkNDBkZjI2/OGY4MS5qcGc'),
+((SELECT product_id FROM Products WHERE name='Ducky One 3 TKL'), 'static', 'https://imgs.search.brave.com/Csy94KyZtApQx86V_VPgK77UOhW30L8vZaQga3IC8RQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/bWFudWEubHMvZ2Fs/bGVyeS81ODk5Njk5/Ni53ZWJw'),
+((SELECT product_id FROM Products WHERE name='NuPhy Air75'), 'static', 'https://imgs.search.brave.com/wAEEjblmNhFp-FFd5LdCO6qpaLJqptsY7RVf1OGyOxY/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMubW1vcnBnLmNv/bS9pbWFnZXMvY29u/dGVudEltYWdlcy8x/MDIwMjIvTnVwaHlf/QWlyNzVfLV9Pbl9M/YXB0b3BfMi5qcGc'),
 
-((SELECT product_id FROM Products WHERE name='HyperX Cloud II'), 'static', 'https://via.placeholder.com/480x360?text=HyperX+Cloud+II'),
-((SELECT product_id FROM Products WHERE name='Logitech G Pro X Headset'), 'static', 'https://via.placeholder.com/480x360?text=G+Pro+X+Headset'),
-((SELECT product_id FROM Products WHERE name='SteelSeries Arctis Nova 7'), 'static', 'https://via.placeholder.com/480x360?text=Arctis+Nova+7'),
-((SELECT product_id FROM Products WHERE name='Razer BlackShark V2'), 'static', 'https://via.placeholder.com/480x360?text=BlackShark+V2');
+((SELECT product_id FROM Products WHERE name='HyperX Cloud II'), 'static', 'https://imgs.search.brave.com/g9L71jrjSXwAXNXMhOv7kaCVQnvVwOu7v2VgCGXQcdA/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4u/bW9zLmNtcy5mdXR1/cmVjZG4ubmV0L01j/ZHhTa3ZjeEdxNXkz/UW52endvSGcuanBn'),
+((SELECT product_id FROM Products WHERE name='Logitech G Pro X Headset'), 'static', 'https://imgs.search.brave.com/i8WInjee1lu0y0ggCqSJLPEOasn1TS3te_NzMMdeMOQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93d3cu/cGNsaXF1aWRhdGlv/bnMuY29tL2ltYWdl/cy9pdGVtcy9sb2dp/dGVjaC1nLXByby14/LXByZW1pdW0td2ly/ZWQtNy0xLWdhbWlu/Zy1oZWFkc2V0LXct/Ymx1ZS12by1jZS5q/cGc'),
+((SELECT product_id FROM Products WHERE name='SteelSeries Arctis Nova 7'), 'static', 'https://imgs.search.brave.com/VGS5JdTuxzUWAVpWH79zY7GOqtz2Ny5deGwCnpCDNvo/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4u/bW9zLmNtcy5mdXR1/cmVjZG4ubmV0L2hV/bnJORmpNWW5nZ1ZG/eTNtenNkRlouanBl/Zw'),
+((SELECT product_id FROM Products WHERE name='Razer BlackShark V2'), 'static', 'https://imgs.search.brave.com/FELEXvNbPnsO9oLlH12Qnk4jSVpUo7Q8VRrmIfHUIGQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nYW1lc3RvcC5j/b20vaS9nYW1lc3Rv/cC8yMDAxMDQ2Mi0z/ZjA4NjJjOF9BTFQw/Nj8kcGRwJD93PTEy/NTYmaD02NjQmZm10/PWF1dG8');
 
 -- Thêm 1 sản phẩm mỗi danh mục để đủ 5 sp/nhóm
 USE gaming_store;
@@ -160,7 +160,7 @@ INSERT INTO Inventory (product_id, quantity) VALUES
 
 -- ProductImages bổ sung (placeholder)
 INSERT INTO ProductImages (product_id, type, url) VALUES
-((SELECT product_id FROM Products WHERE name='Zowie EC2-CW'), 'static', 'https://via.placeholder.com/480x360?text=Zowie+EC2-CW'),
-((SELECT product_id FROM Products WHERE name='Leopold FC750R'), 'static', 'https://via.placeholder.com/480x360?text=Leopold+FC750R'),
-((SELECT product_id FROM Products WHERE name='Corsair HS80 RGB Wireless'), 'static', 'https://via.placeholder.com/480x360?text=HS80+RGB+Wireless');
+((SELECT product_id FROM Products WHERE name='Zowie EC2-CW'), 'static', 'https://imgs.search.brave.com/kVe54rqJulriLyhKHq6hhfoDCVR3WMpuuOfvygzb6gQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9wcmV2/aWV3LnJlZGQuaXQv/em93aWUtZWMtY3ct/c2VyaWVzLW15LWNv/bXBsZXRlLXJldmll/dy12MC0zc29uczF6/emgycGIxLnBuZz93/aWR0aD00MDMyJmZv/cm1hdD1wbmcmYXV0/bz13ZWJwJnM9YzY4/NDYxYWQ0YjM4NTBi/NmJlYzI1MDFiMmY3/ZDE3YjQ5ZGY5ZjE5/Mw'),
+((SELECT product_id FROM Products WHERE name='Leopold FC750R'), 'static', 'https://imgs.search.brave.com/gyhmLvUKjkWWFC86HKkkqFd9u-PxnBDv9TYJtyvoMw4/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9wYnMt/cHJvZC5saW51c3Rl/Y2h0aXBzLmNvbS9t/b250aGx5XzIwMjBf/MDMvMjc0OTUzODQ1/X0xlb3BvbGRGQzc1/MFItUFMoQmx1ZS1N/ZXRhbCkzLmpwZy5i/Y2Y3MDA2Y2ZhNjM0/ZTkzOWRiMmQwZDUz/YzczY2E0MS5qcGc'),
+((SELECT product_id FROM Products WHERE name='Corsair HS80 RGB Wireless'), 'static', 'https://imgs.search.brave.com/-scESIMh4nZCNZKQtDEjNzACpazm2uMMNYxIPwG_zGQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly91cy5t/YXhnYW1pbmcuY29t/L2ltZy9iaWxkZXIv/YXJ0aWtsYXIvMjEw/OTIuanBnP209MTY0/NjIyNzE4MSZ3PTcy/MA');
 
