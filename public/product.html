@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/product_detail.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+</head>
+
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="product-detail-container" aria-live="polite">
+        <div class="pd-breadcrumb" id="breadcrumb"></div>
+        <div class="pd-wrapper">
+            <div class="pd-gallery">
+                <div class="pd-image-main" id="imageMain"></div>
+                <div class="pd-thumbs" id="thumbs"></div>
+            </div>
+            <div class="pd-info">
+                <h1 id="pdName" class="pd-name">Đang tải...</h1>
+                <p id="pdDesc" class="pd-desc"></p>
+                <div class="pd-meta">
+                    <p><strong>Mã:</strong> <span id="pdCode"></span></p>
+                    <p><strong>Danh mục:</strong> <span id="pdCategory"></span></p>
+                    <p><strong>Tồn kho:</strong> <span id="pdStock"></span></p>
+                </div>
+                <div class="pd-price" id="pdPrice"></div>
+                <div class="pd-actions">
+                    <button id="addCartBtn" class="btn-primary">Thêm vào giỏ</button>
+                </div>
+            </div>
+        </div>
+        <section class="pd-extra" id="extraSection" hidden>
+            <h2>Hình ảnh khác</h2>
+            <div class="pd-extra-grid" id="extraImages"></div>
+        </section>
+        <div id="pdMessage" class="pd-message"></div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/header.js"></script>
+    <script src="js/productDetail.js"></script>
+    <script>
+        function loadHTML(elementId, file, callback) {
+            fetch(file)
+                .then(r => r.text())
+                .then(html => { document.getElementById(elementId).innerHTML = html; if (callback) callback(); })
+                .catch(err => console.error('Lỗi load component', file, err));
+        }
+        loadHTML('header-placeholder', 'component/header.html', () => {
+            document.body.classList.add('has-fixed-header');
+        });
+        loadHTML('footer-placeholder', 'component/footer.html');
+    </script>
+</body>
+
+</html>

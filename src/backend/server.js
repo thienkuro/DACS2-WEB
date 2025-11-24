@@ -32,6 +32,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // API routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/products', require('./routes/products'));
 
 app.listen(PORT, () => {
     console.log(`Server Node.js đang chạy tại http://127.0.0.1:${PORT}`);

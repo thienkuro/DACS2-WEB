@@ -20,8 +20,9 @@
     };
 
     async function loadProducts() {
-        const res = await fetch('data/products.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error('Không tải được products.json');
+        // Gọi API backend để lấy dữ liệu từ MySQL
+        const res = await fetch('http://127.0.0.1:3000/api/products', { credentials: 'include' });
+        if (!res.ok) throw new Error('Không tải được danh sách sản phẩm từ API');
         const data = await res.json();
         return Array.isArray(data) ? data : (data.products || []);
     }
@@ -37,8 +38,11 @@
             const safeImg = escapeHTML(img);
             const alt = name;
             const fallback = 'https://via.placeholder.com/480x360?text=No+Image';
+            // Ưu tiên dùng mã sản phẩm (code) nếu có, không thì dùng id
+            const codeOrId = p.code || p.product_code || p.id || p.product_id;
+            const href = codeOrId ? `product.html?code=${encodeURIComponent(codeOrId)}` : '#';
             return `
-                <a class="product-item" href="#" title="${name}">
+                <a class="product-item" href="${href}" title="${name}">
                     ${img ? `<img src="${safeImg}" alt="${alt}" loading="lazy" decoding="async" width="480" height="360" onerror="this.onerror=null;this.src='${fallback}';">` : ''}
                     <p>${name}<br><strong>${price}</strong></p>
                 </a>`;
