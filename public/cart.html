@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng của bạn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+    <div id="toast-container"></div>
+
+    <main class="cart-container">
+        <h1>Giỏ hàng</h1>
+        <div id="cartEmpty" class="cart-empty" hidden>
+            <p>Giỏ hàng trống. <a href="index.html">Tiếp tục mua sắm</a></p>
+        </div>
+        <div id="cartContent" class="cart-content" hidden>
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="cartTableBody"></tbody>
+            </table>
+            <div class="cart-summary">
+                <p><strong>Tổng số sản phẩm:</strong> <span id="cartTotalItems">0</span></p>
+                <p><strong>Tổng tiền:</strong> <span id="cartTotalAmount">0 ₫</span></p>
+                <button id="cartCheckoutBtn" class="btn-primary" disabled onclick="location.href='checkout.html'">Thanh toán</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/header.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        function loadHTML(id, file, cb) {
+            fetch(file).then(r=>r.text()).then(h=>{
+                document.getElementById(id).innerHTML=h;
+                if (cb) cb();
+            });
+        }
+        loadHTML('header-placeholder','component/header.html',()=> {
+            document.body.classList.add('has-fixed-header');
+        });
+        loadHTML('footer-placeholder','component/footer.html');
+        document.addEventListener('DOMContentLoaded', () => {
+            Cart.renderCartPage();
+        });
+    </script>
+</body>
+</html>

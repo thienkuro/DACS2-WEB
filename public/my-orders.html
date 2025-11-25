@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đơn hàng của tôi - 3TD</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .orders-container { max-width: 1000px; margin: 90px auto 40px; padding: 0 16px; }
+        .orders-filter { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+        .orders-list { border:1px solid #e0e0e0; border-radius:8px; background:#fafafa; }
+        .order-row { display:grid; grid-template-columns: 140px 1fr 110px 120px 120px; gap:12px; padding:12px 16px; border-bottom:1px solid #e5e5e5; align-items:center; font-size:14px; }
+        .order-row:last-child { border-bottom:none; }
+        .order-code { font-weight:600; }
+        .order-status { text-transform:capitalize; font-weight:500; }
+        .order-status.pending { color:#ff9800; }
+        .order-status.paid { color:#2196f3; }
+        .order-status.shipped { color:#673ab7; }
+        .order-status.completed { color:#2e7d32; }
+        .order-status.cancelled { color:#d32f2f; }
+        .order-actions button { padding:6px 10px; font-size:12px; }
+        .pagination { display:flex; gap:4px; flex-wrap:wrap; margin-top:16px; }
+        .pagination button { padding:6px 10px; }
+        .empty { padding:28px; text-align:center; }
+        @media (max-width:900px){
+            .order-row { grid-template-columns: 1fr 1fr 1fr; }
+            .order-row .hide-mobile { display:none; }
+        }
+    </style>
+</head>
+<body>
+<div id="header-placeholder"></div>
+<main class="orders-container">
+    <h1>Đơn hàng của tôi</h1>
+    <div id="loginNotice" style="display:none; background:#ffe8e3; padding:12px 16px; border:1px solid #ffc2b5; border-radius:6px;">
+        Bạn chưa đăng nhập. Vui lòng đăng nhập để xem danh sách đơn hàng.
+    </div>
+    <div class="orders-filter" id="ordersFilter">
+        <select id="statusSelect" aria-label="Lọc trạng thái">
+            <option value="">Tất cả trạng thái</option>
+            <option value="pending">Đang xử lý</option>
+            <option value="paid">Đã thanh toán</option>
+            <option value="shipped">Đang giao</option>
+            <option value="completed">Hoàn tất</option>
+            <option value="cancelled">Đã hủy</option>
+        </select>
+        <button id="reloadBtn" class="btn-primary">Tải lại</button>
+    </div>
+    <div id="ordersMessage"></div>
+    <div class="orders-list" id="ordersList"></div>
+    <div class="pagination" id="pagination"></div>
+</main>
+<div id="footer-placeholder"></div>
+
+<script src="js/header.js"></script>
+<script src="js/myOrders.js"></script>
+<script>
+function loadHTML(id,file,cb){fetch(file).then(r=>r.text()).then(h=>{document.getElementById(id).innerHTML=h;if(cb)cb();});}
+loadHTML('header-placeholder','component/header.html',()=>document.body.classList.add('has-fixed-header'));
+loadHTML('footer-placeholder','component/footer.html');
+</script>
+</body>
+</html>

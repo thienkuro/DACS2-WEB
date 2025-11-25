@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/checkout.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+</head>
+
+<body>
+    <div id="header-placeholder"></div>
+    <div id="toast-container"></div>
+
+    <main class="checkout-container">
+        <h1>Thanh toán</h1>
+        <section class="checkout-grid">
+            <div class="checkout-left">
+                <h2>Thông tin giao hàng</h2>
+                <form id="checkoutForm">
+                    <label>
+                        Tên người nhận
+                        <input type="text" name="shipping_name" required maxlength="100">
+                    </label>
+                    <label>
+                        Số điện thoại
+                        <input type="tel" name="phone" required pattern="^[0-9]{8,20}$" maxlength="20"> 
+                    </label>
+                    <label>
+                        Địa chỉ chi tiết
+                        <textarea name="address" required rows="3" maxlength="500"></textarea>
+                    </label>
+                    <label>
+                        Phương thức thanh toán
+                        <select name="payment_method">
+                            <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                            <option value="bank_transfer">Chuyển khoản ngân hàng</option>
+                            <option value="momo">Ví MoMo (demo)</option>
+                            <option value="zalopay">ZaloPay (demo)</option>
+                        </select>
+                    </label>
+                    <label>
+                        Ghi chú (tuỳ chọn)
+                        <textarea name="notes" rows="2" maxlength="500"></textarea>
+                    </label>
+                    <button type="submit" class="btn-primary" id="submitOrderBtn">Xác nhận thanh toán</button>
+                </form>
+            </div>
+            <div class="checkout-right">
+                <h2>Giỏ hàng</h2>
+                <div id="checkoutItems"></div>
+                <p><strong>Tổng số lượng:</strong> <span id="checkoutTotalQty">0</span></p>
+                <p><strong>Tổng tiền:</strong> <span id="checkoutTotalAmount">0 ₫</span></p>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/header.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/checkout.js"></script>
+    <script>
+        function loadHTML(id, file, cb) {
+            fetch(file).then(r => r.text()).then(h => {
+                document.getElementById(id).innerHTML = h;
+                if (cb) cb();
+            });
+        }
+        loadHTML('header-placeholder', 'component/header.html', () => {
+            document.body.classList.add('has-fixed-header');
+        });
+        loadHTML('footer-placeholder', 'component/footer.html');
+    </script>
+</body>
+
+</html> 

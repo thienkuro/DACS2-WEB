@@ -1,0 +1,14 @@
+.checkout-container { max-width: 1100px; margin: 90px auto 40px; padding: 0 16px; }
+.checkout-grid { display: grid; gap: 32px; grid-template-columns: 1fr 1fr; }
+.checkout-left form { display: flex; flex-direction: column; gap: 14px; }
+.checkout-left input, .checkout-left textarea, .checkout-left select {
+    width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;
+}
+.checkout-right { background: #fafafa; padding: 16px; border-radius: 8px; border: 1px solid #e0e0e0; }
+.checkout-item { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid #eee; }
+.checkout-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+.ci-subtotal { margin-left: auto; font-weight: bold; }
+.btn-primary { cursor: pointer; }
+@media (max-width: 900px) {
+  .checkout-grid { grid-template-columns: 1fr; }
+}

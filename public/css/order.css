@@ -1,0 +1,7 @@
+.order-detail-container { max-width: 900px; margin: 90px auto 40px; padding: 0 16px; }
+.order-meta, .order-shipping, .order-items { margin-bottom: 24px; background:#fafafa; padding:16px; border-radius:8px; border:1px solid #e0e0e0; }
+.order-item-row { display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap:12px; padding:8px 0; border-bottom:1px solid #eee; font-size:14px; }
+.order-item-row:last-child { border-bottom:none; }
+@media (max-width: 700px){
+  .order-item-row { grid-template-columns: 1fr 1fr; }
+}          

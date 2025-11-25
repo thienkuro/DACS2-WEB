@@ -8,31 +8,30 @@ require('dotenv').config();
 const app = express();
 const PORT = 3000;
 
-// Middleware
 app.use(cors({
-    origin: 'http://127.0.0.1:5500', // FE Live Server
+    origin: 'http://127.0.0.1:5500',
     credentials: true
 }));
 
 app.use(express.json());
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'dev_secret',
     resave: false,
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        secure: false,            // dev HTTP
-        sameSite: 'lax',          // tường minh (mặc định là 'lax' nhưng nên ghi rõ)
+        secure: false,
+        sameSite: 'lax',
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
 
-// Serve static files (frontend)
 app.use(express.static(path.join(__dirname, '../public')));
 
-// API routes
+// Routers
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
+app.use('/api/orders', require('./routes/orders')); // <--- Thêm dòng này
 
 app.listen(PORT, () => {
     console.log(`Server Node.js đang chạy tại http://127.0.0.1:${PORT}`);

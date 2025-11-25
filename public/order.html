@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết đơn hàng</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/order.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+</head>
+<body>
+<div id="header-placeholder"></div>
+<main class="order-detail-container">
+    <h1>Đơn hàng</h1>
+    <div id="orderMessage"></div>
+    <div id="orderInfo" hidden>
+        <section class="order-meta">
+            <p><strong>Mã đơn:</strong> <span id="odCode"></span></p>
+            <p><strong>Ngày tạo:</strong> <span id="odDate"></span></p>
+            <p><strong>Trạng thái:</strong> <span id="odStatus"></span></p>
+            <p><strong>Thanh toán:</strong> <span id="odPayStatus"></span></p>
+        </section>
+        <section class="order-shipping">
+            <h2>Giao hàng</h2>
+            <p><strong>Người nhận:</strong> <span id="odShipName"></span></p>
+            <p><strong>SĐT:</strong> <span id="odPhone"></span></p>
+            <p><strong>Địa chỉ:</strong> <span id="odAddress"></span></p>
+            <p><strong>Phương thức thanh toán:</strong> <span id="odPaymentMethod"></span></p>
+        </section>
+        <section class="order-items">
+            <h2>Sản phẩm</h2>
+            <div id="odItems"></div>
+            <p><strong>Tổng tiền:</strong> <span id="odTotal"></span></p>
+        </section>
+        <p><a href="index.html" class="btn-primary">Tiếp tục mua sắm</a></p>
+    </div>
+</main>
+<div id="footer-placeholder"></div>
+<script src="js/header.js"></script>
+<script src="js/orderDetail.js"></script>
+<script>
+    function loadHTML(id,file,cb){fetch(file).then(r=>r.text()).then(h=>{document.getElementById(id).innerHTML=h;if(cb)cb();});}
+    loadHTML('header-placeholder','component/header.html',()=>document.body.classList.add('has-fixed-header'));
+    loadHTML('footer-placeholder','component/footer.html');
+</script>
+</body>
+</html>

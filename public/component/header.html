@@ -1,7 +1,9 @@
 <header class="header">
     <div class="logo">
+       <a href="index.html" class="logo" aria-label="Trang chủ">
         <h2>3TD</h2>
         <p>3TD.COM</p>
+       </a>
     </div>
     <div class="menu-container">
         <button class="menu-toggle" id="menuToggle"><i class='bx bx-menu'></i> Danh mục</button>
@@ -19,19 +21,28 @@
         </ul>
     </div>
     <div class="search">
-        <form class="search-bar" id="siteSearch" role="search" action="../product.html" method="GET">
+        <form class="search-bar" id="siteSearch" role="search" action="product.html" method="GET">
             <i class='bx bx-search search-icon'></i>
             <input id="searchInput" type="text" name="q" placeholder="Bạn cần tìm gì?" autocomplete="off" aria-label="Tìm kiếm">
         </form>
         <div class="search-suggestions" id="searchSuggestions" aria-hidden="true"></div>
     </div>
     <div class="contact-info">
-        <span><i class='bx bx-phone'></i> Hotline 1900.5301</span>
-        <span><i class='bx bx-map'></i> Hệ thống Showroom</span>
-        <span><i class='bx bx-receipt'></i> Tra cứu đơn hàng</span>
+        <a href="tel:19005301" class="contact-link" aria-label="Gọi hotline 1900.5301" style="color: white;">
+            <i class='bx bx-phone'></i> Hotline 1900.5301
+        </a>
+        <a href="showroom.html" class="contact-link" aria-label="Xem hệ thống showroom" style="color: white;">
+            <i class='bx bx-map'></i> Hệ thống Showroom
+        </a>
+        <a href="my-orders.html" class="contact-link" aria-label="Tra cứu đơn hàng theo mã" style="color: white;">
+            <i class='bx bx-receipt'></i> Tra cứu đơn hàng
+        </a>
     </div>
     <div class="user-actions">
-        <span><i class='bx bx-cart'></i> Giỏ hàng</span>
+        <a href="cart.html" class="cart-link" aria-label="Giỏ hàng" style="color: white;">
+            <i class='bx bx-cart'></i> Giỏ hàng
+            <span class="cart-badge">0</span>
+        </a>
         <div class="login-container">
             <span id="loginBtn">
                 <i class='bx bx-user'></i> Đăng nhập
@@ -44,6 +55,6 @@
         </div>
     </div>
 
-    <div id="popup-container" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 2000;"></div>
-    <div id="authModalOverlay" class="auth-modal-overlay"></div>  
+    <div id="popup-container" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background-color:rgba(0,0,0,.5);justify-content:center;align-items:center;z-index:2000;"></div>
+    <div id="authModalOverlay" class="auth-modal-overlay"></div>
 </header>

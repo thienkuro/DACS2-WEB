@@ -39,7 +39,14 @@ CREATE TABLE Products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES Categories(category_id) ON DELETE SET NULL
 );
-
+ALTER TABLE Orders
+    ADD COLUMN order_code VARCHAR(30) UNIQUE AFTER order_id,
+    ADD COLUMN shipping_name VARCHAR(100) AFTER user_id,
+    ADD COLUMN phone VARCHAR(20) AFTER shipping_name,
+    ADD COLUMN address TEXT AFTER phone,
+    ADD COLUMN payment_method ENUM('cod','bank_transfer','momo','zalopay') DEFAULT 'cod' AFTER address,
+    ADD COLUMN payment_status ENUM('unpaid','paid','failed') DEFAULT 'unpaid' AFTER payment_method,
+    ADD COLUMN notes TEXT AFTER payment_status;
 -- ==============================
 -- 5. Bảng ProductImages (NF4/NF5)
 -- ==============================
@@ -72,6 +79,7 @@ CREATE TABLE Orders (
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
+
 -- ==============================
 -- 8. Bảng OrderItems
 -- ==============================
@@ -84,7 +92,14 @@ CREATE TABLE OrderItems (
     FOREIGN KEY (order_id) REFERENCES Orders(order_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
-
+ALTER TABLE Orders
+    ADD COLUMN order_code VARCHAR(30) UNIQUE AFTER order_id,
+    ADD COLUMN shipping_name VARCHAR(100) AFTER user_id,
+    ADD COLUMN phone VARCHAR(20) AFTER shipping_name,
+    ADD COLUMN address TEXT AFTER phone,
+    ADD COLUMN payment_method ENUM('cod','bank_transfer','momo','zalopay') DEFAULT 'cod' AFTER address,
+    ADD COLUMN payment_status ENUM('unpaid','paid','failed') DEFAULT 'unpaid' AFTER payment_method,
+    ADD COLUMN notes TEXT AFTER payment_status;
 -- ==============================
 -- 9. Dữ liệu mẫu
 -- ==============================
