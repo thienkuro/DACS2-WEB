@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Danh sách người dùng</title>
+
+  <!-- CSS ngoài -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/products.css" />
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+
+  <style>
+/* ===== ADMIN TABLE ONLY ===== */
+
+/* Card vẫn giữ nguyên */
+.card {
+  margin: 20px 40px;
+  box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+  border-radius: 6px;
+  background-color: white;
+}
+
+.card-header {
+  padding: 12px 20px;
+  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+  color: #4e73df;
+}
+
+.card-body {
+  padding: 20px;
+}
+.main-content-admin {
+    padding: 20px 40px;
+    min-height: 80vh;
+}
+
+
+/* ===== CHỈ TABLE CÓ CLASS admin-table ===== */
+
+table.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+/* thead */
+table.admin-table thead.table-dark {
+  background-color: #343a40;
+  color: #fff;
+}
+
+/* cell */
+table.admin-table th,
+table.admin-table td {
+  padding: 12px 10px;
+  border: 1px solid #dee2e6;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* text dài */
+table.admin-table .desc-cell {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* nút thao tác */
+table.admin-table .action-btn {
+  font-size: 1.2rem;
+  margin: 0 5px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #4e73df;
+}
+
+/* spinner trong bảng */
+table.admin-table .spinner-border {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
+}
+  </style>
+</head>
+
+<body >
+  <div id="header-placeholder"></div>
+  <div class="main-content-admin">
+  <div class="card shadow mb-4">
+    <h2 class="h3 text-gray-800 border-start border-4 border-primary ps-3">Quản Lý Người Dùng</h2>
+    <div class="card-header">
+      Danh sách người dùng
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table cellspacing="0" cellpadding="0" border="0" class="table table-bordered table-hover align-middle admin-table">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Ngày tạo</th>
+              <th style="width: 100px;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="user-list">
+            <tr>
+              <td colspan="6" class="text-center p-4">
+                <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+                <p>Đang tải dữ liệu...</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="card shadow mb-4">
+  <div class="card-header">
+    Thêm người dùng mới
+  </div>
+  <div class="card-body">
+    <form id="add-user-form">
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="text" name="role" placeholder="Role" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <button type="submit">Thêm mới</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+  <div id="footer-placeholder"></div>
+
+  <script src="js/header.js"></script>
+  <script src="js/users.js"></script>
+
+  <script>
+    // Load HTML component
+    function loadHTML(id, file, callback) {
+      fetch(file)
+        .then((r) => r.text())
+        .then((html) => {
+          document.getElementById(id).innerHTML = html;
+          if (callback) callback();
+        })
+        .catch((err) => console.error("Lỗi load component:", err));
+    }
+
+    loadHTML("header-placeholder", "component/header-ad.html", () => {
+      document.body.classList.add("has-fixed-header");
+    });
+
+    // loadHTML("footer-placeholder", "component/footer.html");
+  </script>
+</body>
+
+</html>

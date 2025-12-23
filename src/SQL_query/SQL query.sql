@@ -17,6 +17,7 @@ CREATE TABLE Users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 -- ==============================
 -- 3. Bảng Categories
 -- ==============================
@@ -39,14 +40,6 @@ CREATE TABLE Products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES Categories(category_id) ON DELETE SET NULL
 );
-ALTER TABLE Orders
-    ADD COLUMN order_code VARCHAR(30) UNIQUE AFTER order_id,
-    ADD COLUMN shipping_name VARCHAR(100) AFTER user_id,
-    ADD COLUMN phone VARCHAR(20) AFTER shipping_name,
-    ADD COLUMN address TEXT AFTER phone,
-    ADD COLUMN payment_method ENUM('cod','bank_transfer','momo','zalopay') DEFAULT 'cod' AFTER address,
-    ADD COLUMN payment_status ENUM('unpaid','paid','failed') DEFAULT 'unpaid' AFTER payment_method,
-    ADD COLUMN notes TEXT AFTER payment_status;
 -- ==============================
 -- 5. Bảng ProductImages (NF4/NF5)
 -- ==============================
@@ -179,3 +172,155 @@ INSERT INTO ProductImages (product_id, type, url) VALUES
 ((SELECT product_id FROM Products WHERE name='Leopold FC750R'), 'static', 'https://imgs.search.brave.com/gyhmLvUKjkWWFC86HKkkqFd9u-PxnBDv9TYJtyvoMw4/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9wYnMt/cHJvZC5saW51c3Rl/Y2h0aXBzLmNvbS9t/b250aGx5XzIwMjBf/MDMvMjc0OTUzODQ1/X0xlb3BvbGRGQzc1/MFItUFMoQmx1ZS1N/ZXRhbCkzLmpwZy5i/Y2Y3MDA2Y2ZhNjM0/ZTkzOWRiMmQwZDUz/YzczY2E0MS5qcGc'),
 ((SELECT product_id FROM Products WHERE name='Corsair HS80 RGB Wireless'), 'static', 'https://imgs.search.brave.com/-scESIMh4nZCNZKQtDEjNzACpazm2uMMNYxIPwG_zGQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly91cy5t/YXhnYW1pbmcuY29t/L2ltZy9iaWxkZXIv/YXJ0aWtsYXIvMjEw/OTIuanBnP209MTY0/NjIyNzE4MSZ3PTcy/MA');
 
+
+ALTER TABLE Products
+ADD COLUMN refresh_rate VARCHAR(50) NULL; 
+
+
+INSERT INTO Categories (name, description)
+VALUES ('Màn hình', 'Màn hình gaming hiệu năng cao dành cho game thủ');
+
+INSERT INTO Products (product_code, name, description, price, category_id, refresh_rate)
+VALUES
+('MH144A', 'AOC 24G2 144Hz', 'Màn hình gaming 24 inch, 144Hz, IPS, viền mỏng', 3990000,
+ (SELECT category_id FROM Categories WHERE name='Màn hình'), '144Hz'),
+
+('MH240A', 'ASUS VG259QM 240Hz', 'Màn hình gaming 24.5 inch, 240Hz, Fast IPS', 6990000,
+ (SELECT category_id FROM Categories WHERE name='Màn hình'), '240Hz'),
+
+('MH4KLG', 'LG UltraGear 27GN950 4K', 'Màn hình gaming 27 inch, 4K, Nano IPS, HDR600', 16990000,
+ (SELECT category_id FROM Categories WHERE name='Màn hình'), '4K'),
+
+('MHUW34', 'Samsung Odyssey G5 34"', 'Màn hình Ultrawide 34 inch, 165Hz, VA cong', 9990000,
+ (SELECT category_id FROM Categories WHERE name='Màn hình'), 'Ultrawide'),
+
+('MHUW4K', 'Gigabyte M34WQ 34" UWQHD', 'Màn hình Ultrawide 34 inch, 4K giả lập, 144Hz, IPS', 12990000,
+ (SELECT category_id FROM Categories WHERE name='Màn hình'), 'Ultrawide');
+
+
+INSERT INTO ProductImages (product_id, type, url) VALUES
+((SELECT product_id FROM Products WHERE product_code='MH144A'), 'static', 'https://m.media-amazon.com/images/I/81NEMtk5qPL._AC_SX569_.jpg'),
+((SELECT product_id FROM Products WHERE product_code='MH240A'), 'static', 'https://files.pccasegear.com/UserFiles/VG259QM-asus-tuf-vg259qm-fhd-240hz-freesync-hdr-ips-245in-monitor-product3.jpg'),
+((SELECT product_id FROM Products WHERE product_code='MH4KLG'),  'static', 'https://www.4kfilme.de/wp-content/uploads/2020/07/LG-UltraGear-27GN950-1.jpg'),
+((SELECT product_id FROM Products WHERE product_code='MHUW34'),  'static', 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6445/6445082cv27d.jpg'),
+((SELECT product_id FROM Products WHERE product_code='MHUW4K'),  'static', 'https://c1.neweggimages.com/productimage/nb640/24-012-043-01.jpg');
+
+
+INSERT INTO Inventory (product_id, quantity) VALUES
+((SELECT product_id FROM Products WHERE product_code='MH144A'), 40),
+((SELECT product_id FROM Products WHERE product_code='MH240A'), 25),
+((SELECT product_id FROM Products WHERE product_code='MH4KLG'), 15),
+((SELECT product_id FROM Products WHERE product_code='MHUW34'), 20),
+((SELECT product_id FROM Products WHERE product_code='MHUW4K'), 18);
+
+
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+
+DELETE FROM products WHERE product_id = 25;
+
+ALTER TABLE Products
+DROP FOREIGN KEY Products_ibfk_1;
+
+ALTER TABLE Products
+ADD CONSTRAINT fk_products_category
+FOREIGN KEY (category_id)
+REFERENCES Categories(category_id)
+ON DELETE RESTRICT;
+
+
+ALTER TABLE Products
+DROP FOREIGN KEY products_ibfk_1;
+
+
+ALTER TABLE Products
+MODIFY category_id INT NOT NULL;
+
+SELECT
+  CONSTRAINT_NAME
+FROM information_schema.KEY_COLUMN_USAGE
+WHERE TABLE_SCHEMA = 'gaming_store'
+  AND TABLE_NAME = 'Products'
+  AND REFERENCED_TABLE_NAME IS NOT NULL;
+
+ALTER TABLE Products DROP FOREIGN KEY fk_products_category;
+
+ALTER TABLE Products
+ADD CONSTRAINT fk_products_category_v2
+FOREIGN KEY (category_id)
+REFERENCES Categories(category_id)
+ON DELETE RESTRICT
+ON UPDATE CASCADE;
+
+
+DESCRIBE productimages;
+
+
+
+INSERT INTO Categories (name, description)
+SELECT 'Case', 'Vỏ máy tính, case PC gaming'
+WHERE NOT EXISTS (SELECT 1 FROM Categories WHERE name = 'Case');
+
+INSERT INTO Categories (name, description)
+SELECT 'Máy', 'Máy tính để bàn, PC gaming, workstation'
+WHERE NOT EXISTS (SELECT 1 FROM Categories WHERE name = 'Máy');
+
+INSERT INTO Products (product_code, name, description, price, category_id)
+VALUES
+('CASE01', 'NZXT H510', 'Case mid-tower, thiết kế tối giản, airflow tốt', 1890000,
+ (SELECT category_id FROM Categories WHERE name='Case')),
+
+('CASE02', 'Lian Li O11 Dynamic', 'Case cao cấp, kính cường lực, tối ưu tản nhiệt', 4290000,
+ (SELECT category_id FROM Categories WHERE name='Case')),
+
+('CASE03', 'Corsair 4000D Airflow', 'Case airflow mạnh, hỗ trợ radiator lớn', 2590000,
+ (SELECT category_id FROM Categories WHERE name='Case')),
+
+('CASE04', 'Cooler Master TD500 Mesh', 'Case mesh RGB, luồng gió mạnh', 2390000,
+ (SELECT category_id FROM Categories WHERE name='Case')),
+
+('CASE05', 'DeepCool MATREXX 55', 'Case kính cường lực, giá tốt', 1590000,
+ (SELECT category_id FROM Categories WHERE name='Case'));
+
+
+
+INSERT INTO Inventory (product_id, quantity)
+SELECT product_id, 30 FROM Products WHERE product_code LIKE 'CASE%';
+
+
+INSERT INTO Products (product_code, name, description, price, category_id)
+VALUES
+('PC01', 'PC Gaming RTX 4060', 'Intel i5-12400F, RTX 4060, RAM 16GB, SSD 512GB', 23990000,
+ (SELECT category_id FROM Categories WHERE name='Máy')),
+
+('PC02', 'PC Gaming RTX 4070', 'Ryzen 5 7600, RTX 4070, RAM 32GB, SSD 1TB', 34990000,
+ (SELECT category_id FROM Categories WHERE name='Máy')),
+
+('PC03', 'PC Gaming RTX 3060', 'Intel i5-11400F, RTX 3060, RAM 16GB', 19990000,
+ (SELECT category_id FROM Categories WHERE name='Máy')),
+
+('PC04', 'PC Workstation i7', 'Intel i7-12700, RAM 32GB, SSD 1TB', 28990000,
+ (SELECT category_id FROM Categories WHERE name='Máy')),
+
+('PC05', 'PC Gaming Ryzen 7', 'Ryzen 7 5800X, RTX 3080, RAM 32GB', 39990000,
+ (SELECT category_id FROM Categories WHERE name='Máy'));
+
+
+
+INSERT INTO Inventory (product_id, quantity)
+SELECT product_id, 10 FROM Products WHERE product_code LIKE 'PC%';
+
+
+
+
+SELECT p.product_code, p.name, c.name AS category
+FROM Products p
+JOIN Categories c ON p.category_id = c.category_id
+WHERE c.name IN ('Case', 'Máy');
+
+
+
+SELECT * FROM orders;
+
+SELECT * FROM orderitems;

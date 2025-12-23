@@ -24,6 +24,33 @@ class HeaderManager {
         }
     }
 
+    async checkAdminAccess(targetUrl) {
+    try {
+        const res = await fetch(`${this.API_URL}/check`, {
+            credentials: 'include'
+        });
+        const data = await res.json();
+
+        if (!data.logged_in) {
+            // Chưa login → bật modal
+            this.showLogin();
+            return;
+        }
+
+        if (data.role !== 'ADMIN') {
+            alert("Bạn không có quyền truy cập trang này!");
+            return;
+        }
+
+        // OK → vào trang admin
+        window.location.href = targetUrl;
+
+    } catch (err) {
+        console.error("Lỗi check admin:", err);
+    }
+}
+
+
     async checkLoginStatus() {
         try {
             const res = await fetch(`${this.API_URL}/check`, { credentials: 'include' });
@@ -36,6 +63,21 @@ class HeaderManager {
             console.error('Check login failed:', err);
         }
     }
+        bindSearchEvents() {
+        const form = document.getElementById("siteSearch");
+        const input = document.getElementById("searchInput");
+
+        if (!form || !input) return;
+
+        // Khi nhấn Enter
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const keyword = input.value.trim();
+            if (keyword) {
+            window.location.href = `products.html?q=${encodeURIComponent(keyword)}`;
+            }
+        });
+    }
 
     setup() {
         // Cập nhật badge giỏ hàng nếu module Cart có
@@ -45,12 +87,34 @@ class HeaderManager {
         if (this.user) {
             this.updateUserUI();
             this.bindAvatarHoverEvents();
+            this.bindProtectedLinks();
             return;
         }
         this.bindHoverEvents();
         this.bindModalEvents();
+        this.bindSearchEvents();
         console.log("Header script đã được khởi chạy thành công!");
     }
+
+    bindProtectedLinks() {
+    const protectedSelectors = [
+        "a.manageusers-link",
+        "a.manageproducts-link",
+        "a.manageorders-link"
+    ];
+
+    protectedSelectors.forEach(selector => {
+        const el = document.querySelector(selector);
+        if (!el) return;
+
+        el.addEventListener("click", (e) => {
+            e.preventDefault(); 
+            this.checkAdminAccess(el.href);
+        });
+    });
+}
+
+
 
     bindHoverEvents() {
         const container = document.querySelector('.login-container');

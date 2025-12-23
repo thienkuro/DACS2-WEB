@@ -5,7 +5,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: white;
+    background: transparent !important;
     display: flex;
     flex-direction: column;
 }
@@ -22,9 +22,12 @@ body.has-fixed-header {
 /*header*/
 .header {
     width: 100%;
-    height: 80px;
+    height: 120px;
     /* Chiều cao cố định của header */
-    background-color: #002aff;
+    background-color:rgb(79, 204, 241);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -137,8 +140,8 @@ body.has-fixed-header {
 }
 
 .search-bar:focus-within {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+    border-color: #ff0000;
+    box-shadow: 5 0 0 40px rgba(59, 130, 246, 0.15);
 }
 
 .search-icon {
@@ -375,7 +378,7 @@ body {
     position: absolute;
     top: 50px;
     left: 10px;
-    background: white;
+    background: rgb(255, 255, 255);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     border-radius: 5px;
     padding: 10px;
@@ -392,7 +395,7 @@ body {
 }
 
 .menu li:hover {
-    background: #f4f4f4;
+    background: #35ffff;
 }
 
 /* Hiển thị danh mục khi có class 'active' */
@@ -404,8 +407,8 @@ body {
 
 /* Cấu trúc chính */
 body {
-    font-family: Arial, sans-serif;
-    background: #f8f9fa;
+    font-family: Poppins;
+    background: #ffffff;
     margin: 0;
 }
 
@@ -434,9 +437,9 @@ body {
     height: 260px;
     /* Chừa không gian banner mặc định */
     border-radius: 12px;
-    background: #f1f5f9;
+    background: #ffffff;
     /* nền nhạt khi chưa có ảnh */
-    border: 1px solid #e5e7eb;
+    border: 1px solid #ffffff;
     overflow: hidden;
     margin-bottom: 20px;
 }
@@ -456,11 +459,23 @@ body {
 
 /* Danh sách sản phẩm */
 .product-list {
-    padding-left: 10px;
-    /* Thụt trái ngoài màn hình 10px */
-    padding-right: 10px;
-    /* Thụt phải ngoài màn hình 10px */
+    position: relative;
+    padding: 60px 20px;
+    z-index: 1;
 }
+
+.product-list::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color:#ffffff;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.7;           /* Điều chỉnh độ mờ */
+    z-index: -1;             /* Nằm sau nội dung */
+}
+
 
 /* Tiêu đề danh mục */
 .product-list h2 {
@@ -520,7 +535,8 @@ body {
 /* Ảnh sản phẩm */
 .product-item img {
     width: 100%;
-    height: auto;
+    height: 180px; /* đặt chiều cao cố định */
+    object-fit: cover; /* ảnh không méo, luôn đều nhau */
     border-radius: 8px;
 }
 
@@ -915,4 +931,13 @@ a {
     font-weight: bold;
     cursor: pointer;
     margin-top: 10px;
+}
+.bg-fullscreen { 
+    position: fixed; inset: 0; /* top:0; bottom:0; left:0; right:0 */ 
+    z-index: -999; /* nằm sau tất cả */ 
+    background-image: url("https://cellphones.com.vn/sforum/wp-content/uploads/2023/04/hinh-nen-powerpoint-12.jpg"); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    opacity: 0.8; /* độ mờ */ 
 }

@@ -28,7 +28,7 @@ router.post('/register', async (req, res) => {
             [username, email, hash]
         );
 
-        req.session.user = { id: result.insertId, username };
+        req.session.user = { id: result.insertId, username, role: 'user'};
         res.json({ success: true, user: { username } });
     } catch (err) {
         console.error(err);
@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
         const match = await bcrypt.compare(password, user.password_hash);
         if (!match) return res.status(401).json({ error: 'Sai email hoặc mật khẩu' });
 
-        req.session.user = { id: user.user_id, username: user.username };
+        req.session.user = { id: user.user_id, username: user.username,role: user.role};
         res.json({ success: true, user: { username: user.username } });
     } catch (err) {
         res.status(500).json({ error: 'Lỗi server' });
@@ -58,7 +58,7 @@ router.post('/login', async (req, res) => {
 // Kiểm tra trạng thái
 router.get('/check', (req, res) => {
     if (req.session.user) {
-        res.json({ logged_in: true, username: req.session.user.username });
+        res.json({ logged_in: true, username: req.session.user.username,});
     } else {
         res.json({ logged_in: false });
     }

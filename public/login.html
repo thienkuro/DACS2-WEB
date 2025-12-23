@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f4f6f8;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-box {
+            width: 320px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 10px;
+            background: #2563eb;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .login-box button:hover {
+            background: #1e40af;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-box">
+    <h2>Admin Login</h2>
+
+    <input type="email" id="email" placeholder="Email admin">
+    <input type="password" id="password" placeholder="Mật khẩu">
+
+    <button onclick="login()">Đăng nhập</button>
+
+    <div class="error" id="error"></div>
+</div>
+
+<script>
+async function login() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!email || !password) {
+        document.getElementById('error').innerText = 'Vui lòng nhập đầy đủ thông tin';
+        return;
+    }
+
+    try {
+        const res = await fetch('http://127.0.0.1:3000/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ email, password })
+        });
+
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            document.getElementById('error').innerText = data.error || 'Đăng nhập thất bại';
+            return;
+        }
+
+        // ✅ Login admin thành công
+        window.location.href = 'index-ad.html';
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('error').innerText = 'Không kết nối được server';
+    }
+}
+</script>
+
+</body>
+</html>

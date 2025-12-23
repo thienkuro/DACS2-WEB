@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: "HOÀNG HOA THÁM",
                 address: "78-80-82 Hoàng Hoa Thám, P.12, Q.Tân Bình, TP.HCM",
                 map: "https://www.google.com/maps?q=78-80-82+Hoàng+Hoa+Thám,+Tân+Bình",
-                img: "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrTyny7vhHR7M66Mv5iFtLBdG_LYBYVrVJDHR2ySc_lT8g1PexBeaN3gN0XlySvhcZz4vCoP1NOQIdlT9o4Aty32tB-qvayKzMj1yPKXL6QXse0mrmX-uxp-uHfcLmTWx0chEeXHQ=w600-h400-k-no"
+                img: "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=RphyZDH9ZlqWPqsOFGRYXg&cb_client=search.gws-prod.gps&w=408&h=240&yaw=273.75818&pitch=0&thumbfov=100"
             },
             {
                 name: "KHA VẠN CÂN",
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: "THÁI HÀ",
                 address: "162-164 Thái Hà, P.Trung Liệt, Q.Đống Đa, Hà Nội",
                 map: "https://www.google.com/maps?q=162-164+Thái+Hà,+Đống+Đa",
-                img: "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqvfBdSGkCR68yca3uWtq9NhZf2qBdXsuSyQBY6cjmj-QUeOErHzi8SoaK-bHtj-DtpEFZr0viKMMI5ulhmC_3CFgiY06ZfOWxkl7miFCaIICt_-OYjkE9xTMqW9QOHMsJM4Lo=w600-h360-k-no"
+                img: "https://lh3.googleusercontent.com/gps-cs-s/AG0ilSx5JHC6NHjfTOW-4jvmYeZm9lV3yUfBUpDEm4JKEJZIiQYC5UKoOjQ9x9B0LBfW6onOWKczGsfJ8ZW3ycl6H43uorAJjxfnpugUPil44OF5JqybIQGW9krCLeBSV4LDBvvO-Jo0ig=w408-h306-k-no"
             },
             {
                 name: "CẦU GIẤY",
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="store-card">
         <div class="store-img"><img src="${s.img}" alt="${s.name}"></div>
         <div class="store-body">
-          <div class="store-name">Showroom 3TD – ${s.name}</div>
+          <div class="store-name">Showroom TT SHOP – ${s.name}</div>
           <div class="store-addr"><i class='bx bx-map'></i> ${s.address}</div>
           <div class="store-actions">
             <button class="btn-outline btn-map" data-map="${s.map}"><i class='bx bx-map-pin'></i> Xem bản đồ</button>

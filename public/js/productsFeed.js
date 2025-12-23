@@ -13,11 +13,17 @@
         catch { return n + ' đ'; }
     }
 
-    const CATEGORY_MAP = {
-        'Chuột': ['Chuột', 'Mouse', 'Chuột + Lót chuột'],
-        'Bàn phím': ['Bàn phím', 'Keyboard'],
-        'Tai nghe': ['Tai nghe', 'Headset']
-    };
+const CATEGORY_MAP = {
+    'Chuột': ['Chuột', 'Mouse', 'Chuột + Lót chuột'],
+    'Bàn phím': ['Bàn phím', 'Keyboard'],
+    'Tai nghe': ['Tai nghe', 'Headset'],
+    'Màn hình': ['Màn hình', 'Monitor', 'Display'],
+    'RAM, SSD': ['RAM', 'SSD', 'Ổ cứng, RAM, Thẻ nhớ'],
+    'Case': ['Case', 'Vỏ máy'],
+    'Máy': ['Máy', 'PC', 'Computer'],
+};
+
+
 
     async function loadProducts() {
         // Gọi API backend để lấy dữ liệu từ MySQL

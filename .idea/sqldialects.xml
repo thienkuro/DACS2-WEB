@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/src/SQL_query/SQL query.sql" dialect="MySQL" />
-<<<<<<< HEAD
     <file url="file://$PROJECT_DIR$/../SQL query.sql" dialect="MariaDB" />
-=======
->>>>>>> 39e9322b703686e8de203b5b95d7968c2aaee5bb
   </component>
 </project>

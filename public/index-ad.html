@@ -4,23 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gaming Gear</title>
+    <title>Admin Panel</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
 </head>
 
 <body>
-    <!-- Header -->
-    <div id="header-placeholder"></div>
+    <!-- Header Admin -->
+    <div id="header-ad-placeholder"></div>
 
-    <!-- Main Content -->
-    <div id="mainContent-placeholder"></div>
+    <!-- Main Content Admin -->
+    <div id="mainContent-ad-placeholder"></div>
 
-    <!-- Footer -->
-    <div id="footer-placeholder"></div>
+    <!-- Footer (có thể dùng chung) -->
+    <div id="footer-ad-placeholder"></div>
 
     <!-- Modal Placeholder -->
-    <div id="auth-placeholder"></div>
+    <div id="auth-ad-placeholder"></div>
+
+
+
+    <script>
+    (async () => {
+        const res = await fetch('http://127.0.0.1:3000/api/admin/check', {
+            credentials: 'include'
+        });
+
+        if (!res.ok) {
+            location.href = 'login.html';
+        }
+    })();
+    </script>
+
 
     <!-- Load Components -->
     <script src="js/menu.js"></script>
@@ -35,25 +50,23 @@
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById(elementId).innerHTML = data;
-                    if (callback) callback(); // Gọi callback sau khi tải xong
+                    if (callback) callback();
                 })
                 .catch(error => console.error(`Lỗi khi tải ${file}:`, error));
         }
 
-        // Load các component
-        loadHTML("header-placeholder", "component/header.html", () => {
+        // Load các component admin
+        loadHTML("header-ad-placeholder", "component/header-ad.html", () => {
             document.body.classList.add("has-fixed-header");
             if (window.initSearch) initSearch();
         });
-        loadHTML("footer-placeholder", "component/footer.html");
-        loadHTML("mainContent-placeholder", "component/mainContent.html", () => {
+
+        // loadHTML("footer-ad-placeholder", "component/footer.html");
+
+        loadHTML("mainContent-ad-placeholder", "component/mainContent.html", () => {
             if (window.initProducts) window.initProducts();
         });
     </script>
-
-    <!-- JS Modal đăng nhập -->
-    <script src="js/auth-modal.js"></script>
-
 </body>
 
 </html>

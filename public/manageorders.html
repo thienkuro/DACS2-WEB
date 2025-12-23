@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách đơn hàng</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <style>
+/* ===============================
+   CHỈ CSS CHO BẢNG ĐƠN HÀNG
+   KHÔNG ẢNH HƯỞNG HEADER / FORM
+   =============================== */
+
+/* Card chứa bảng */
+.card {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+  padding: 12px 20px;
+  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+  color: #4e73df;
+}
+
+
+.card-body {
+    padding: 20px;
+    overflow-x: auto;
+}
+
+/* ===== BẢNG ĐƠN HÀNG ===== */
+table.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+/* Header bảng */
+table.admin-table thead {
+    background-color: #343a40;
+    color: #fff;
+}
+
+/* Cell */
+table.admin-table th,
+table.admin-table td {
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* Nút thao tác */
+table.admin-table .action-btn {
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin: 0 5px;
+    border: none;
+    background: none;
+}
+
+table.admin-table .action-btn.text-primary {
+    color: #4e73df;
+}
+
+table.admin-table .action-btn.text-danger {
+    color: #dc3545;
+}
+/* Chỉ scope cho form này */
+#add-order-form {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 cột */
+    gap: 16px;
+    align-items: end;
+}
+
+/* Input / select trong form */
+#add-order-form input,
+#add-order-form select {
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+}
+
+/* Focus */
+#add-order-form input:focus,
+#add-order-form select:focus {
+    outline: none;
+    border-color: #4e73df;
+    box-shadow: 0 0 0 2px rgba(78,115,223,.15);
+}
+
+/* Field dài chiếm 2 cột */
+#add-order-form input[name="address"],
+#add-order-form input[name="notes"] {
+    grid-column: span 2;
+}
+
+/* Button */
+#add-order-form button {
+    grid-column: span 4;
+    padding: 12px;
+    background-color: #4e73df;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#add-order-form button:hover {
+    background-color: #2e59d9;
+}
+.main-content-admin {
+    padding: 20px 40px;
+    min-height: auto;
+}
+/* nền mờ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* khung form */
+.modal-card {
+    width: 800px;
+    max-width: 90%;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    animation: fadeIn 0.2s ease;
+}
+
+#btn-close-modal {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* animation nhẹ */
+@keyframes fadeIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+.btn-add-new {
+    background-color: #4e73df;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-add-new:hover {
+    background-color: #2e59d9;
+    color: #fff;
+}
+body.has-fixed-header {
+    padding-top: 70px; /* ĐÚNG bằng chiều cao header */
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+    </style>
+</head>
+<body>
+<div class="has-fixed-header">
+<div id="header-placeholder"></div>
+<main class="main-content-admin"></main>
+<main class="main-content-admin">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h3 text-gray-800 border-start border-4 border-primary ps-3">Quản Lý Đơn Hàng</h2>
+
+    <button class="btn-add-new" id="btn-show-add-order">
+    <i class='bx bx-plus-circle fs-4'></i> Thêm đơn hàng
+    </button>
+    </div>
+<!-- Table đơn hàng -->
+<div class="card">
+    <div class="card-header">Đơn hàng hiện có</div>
+    <div class="card-body">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Mã đơn</th>
+                    <th>User ID</th>
+                    <th>Tài khoản</th>
+                    <th>Người nhận</th>
+                    <th>SĐT</th>
+                    <th>Địa chỉ</th>
+                    <th>PT thanh toán</th>
+                    <th>TT thanh toán</th>
+                    <th>Ghi chú</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="order-list">
+                <tr><td colspan="14">Đang tải dữ liệu...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+</main>
+
+<!-- Form thêm đơn hàng -->
+<div id="order-modal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="card-header">
+            Thêm đơn hàng mới
+            <span id="btn-close-modal">×</span>
+        </div>
+
+        <div class="card-body">
+            <!-- FORM CỦA BẠN GIỮ NGUYÊN -->
+            <form id="add-order-form" class="form-inline">
+                <input type="text" name="order_code" placeholder="Mã đơn" required>
+                <input type="text" name="shipping_name" placeholder="Người nhận" required>
+                <input type="text" name="phone" placeholder="SĐT" required>
+                <input type="text" name="address" placeholder="Địa chỉ" required>
+
+                <select name="payment_method" required>
+                    <option value="">Chọn PT thanh toán</option>
+                    <option value="Tiền mặt">Tiền mặt</option>
+                    <option value="Chuyển khoản">Chuyển khoản</option>
+                </select>
+
+                <select name="payment_status" required>
+                    <option value="">Chọn TT thanh toán</option>
+                    <option value="Chưa thanh toán">Chưa thanh toán</option>
+                    <option value="Đã thanh toán">Đã thanh toán</option>
+                </select>
+
+                <input type="text" name="notes" placeholder="Ghi chú">
+                <input type="number" name="total_amount" placeholder="Tổng tiền" required>
+
+                <select name="status" required>
+                    <option value="">Chọn trạng thái</option>
+                    <option value="Mới">Mới</option>
+                    <option value="Đang xử lý">Đang xử lý</option>
+                    <option value="Hoàn thành">Hoàn thành</option>
+                    <option value="Hủy">Hủy</option>
+                </select>
+
+                <div style="margin-top: 12px;">
+                    <button type="submit">Thêm mới</button>
+                    <button type="button" id="btn-cancel-add">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+<script>
+    // Load header & footer nếu cần
+    async function loadHTML(id, file) {
+        const res = await fetch(file);
+        const html = await res.text();
+        document.getElementById(id).innerHTML = html;
+    }
+    loadHTML("header-placeholder", "component/header-ad.html");
+    // loadHTML("footer-placeholder", "component/footer.html");
+
+const modal = document.getElementById("order-modal");
+const btnShow = document.getElementById("btn-show-add-order");
+const btnClose = document.getElementById("btn-close-modal");
+const btnCancel = document.getElementById("btn-cancel-add");
+
+btnShow.onclick = () => modal.style.display = "flex";
+btnClose.onclick = btnCancel.onclick = () => modal.style.display = "none";
+
+
+    // ==============================
+    // Lấy danh sách đơn hàng
+    // ==============================
+    async function fetchOrders() {
+    try {
+        const res = await fetch("http://127.0.0.1:3000/api/manageorders", {credentials: "include"});
+        if (!res.ok) throw new Error("Server trả lỗi " + res.status);
+        const data = await res.json();
+        // Nếu data là mảng, trả trực tiếp; nếu là object có key 'orders', lấy key đó
+        return Array.isArray(data) ? data : data.orders || [];
+    } catch (err) {
+        console.error("Lỗi fetchOrders:", err);
+        return [];
+    }
+}
+
+async function renderOrders() {
+    const tbody = document.getElementById("order-list");
+    tbody.innerHTML = "<tr><td colspan='14'>Đang tải...</td></tr>";
+
+    try {
+        const orders = await fetchOrders();
+
+        if (!orders.length) {
+            tbody.innerHTML = "<tr><td colspan='14'>Không có đơn hàng</td></tr>";
+            return;
+        }
+
+        tbody.innerHTML = "";
+        orders.forEach(o => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${o.order_id}</td>
+                <td>${o.order_code}</td>
+                <td>${o.user_id ?? ''}</td>
+                <td>${o.username ?? ''}</td>
+                <td>${o.shipping_name}</td>
+                <td>${o.phone}</td>
+                <td>${o.address}</td>
+                <td>${o.payment_method}</td>
+                <td>${o.payment_status}</td>
+                <td>${o.notes || ""}</td>
+                <td>${Number(o.total_amount || 0).toLocaleString()}</td>
+                <td>${o.status}</td>
+                <td>${o.created_at ? o.created_at.slice(0,10) : ""}</td>
+                <td>
+                    <button class="action-btn text-primary"
+                    onclick='editOrder(${o.order_id}, ${JSON.stringify(o.status)})'>
+                    <i class='bx bx-edit-alt'></i>
+                    </button>
+                    <button class="action-btn text-danger"
+                    onclick="deleteOrder(${o.order_id})">
+                    <i class='bx bx-trash'></i>
+                    </button>
+                </td>
+                `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        tbody.innerHTML = "<tr><td colspan='14'>Lỗi tải dữ liệu</td></tr>";
+        console.error(err);
+    }
+}
+
+    // ==============================
+    // Sửa đơn hàng (chỉ sửa status)
+    // ==============================
+    async function editOrder(id, oldStatus) {
+        const newStatus = prompt("Cập nhật trạng thái:", oldStatus);
+        if (!newStatus || newStatus === oldStatus) return;  
+
+        await fetch(`/api/manageorders/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ status: newStatus })
+        });
+
+        renderOrders();
+    }
+
+    // ==============================
+    // Xóa đơn hàng
+    // ==============================
+    async function deleteOrder(id) {
+        if (!confirm("Xóa đơn hàng ID " + id + "?")) return;
+
+        await fetch(`/api/manageorders/${id}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        renderOrders();
+    }
+    // Load danh sách
+    renderOrders();
+</script>
+
+</body>
+</html>

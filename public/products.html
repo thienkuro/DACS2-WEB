@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <style>
+        .product-list { padding: 20px; }
+        .product- { margin-bottom: 40px; }
+        .product- h2 { margin-bottom: 15px; }
+        .product-grid { display: flex; flex-wrap: wrap; gap: 15px; }
+        .product-item { flex: 0 0 calc(25% - 15px); border: 1px solid #ccc; padding: 10px; text-align: center; }
+        .product-item img { width: 100%; height: auto; object-fit: contain; }
+        .product-item p { margin-top: 8px; font-size: 14px; }
+        @media (max-width: 1024px) { .product-item { flex: 0 0 calc(33.33% - 15px); } }
+        @media (max-width: 768px) { .product-item { flex: 0 0 calc(50% - 15px); } }
+        @media (max-width: 480px) { .product-item { flex: 0 0 100%; } }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="main-content">
+        <section class="hero-banner" aria-label="Banner">
+            <img src="https://mega.com.vn/media/news/2605_hinh-nen-cong-nghe-pc47.jpg" alt="Banner" class="bg-image">
+            <div class="hero-content">
+                <h1>Kết quả tìm kiếm</h1>
+            </div>
+        </section>
+
+        <section class="product-list" id="productList"></section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/header.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        // Load header/footer
+        function loadHTML(elementId, file, callback) {
+            fetch(file).then(r => r.text()).then(html => {
+                document.getElementById(elementId).innerHTML = html;
+                if (callback) callback();
+            }).catch(err => console.error('Lỗi load component', file, err));
+        }
+        loadHTML('header-placeholder', 'component/header.html', () => document.body.classList.add('has-fixed-header'));
+        loadHTML('footer-placeholder', 'component/footer.html');
+
+        // --- Render products ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('productList');
+            const q = new URLSearchParams(window.location.search).get('q') || '';
+
+            container.innerHTML = '<p>Đang tải...</p>';
+
+            try {
+                const res = await fetch(`http://127.0.0.1:3000/api/products/search`);
+                const data = await res.json();
+                let products = data.products || [];
+
+                // Lọc theo từ khóa (tên + category)
+                if (q) {
+                    const term = q.toLowerCase();
+                    products = products.filter(p =>
+                        p.name.toLowerCase().includes(term) ||
+                        (p.category && p.category.toLowerCase().includes(term))
+                    );
+                }
+
+                if (!products.length) {
+                    container.innerHTML = '<p>Không tìm thấy sản phẩm nào.</p>';
+                    return;
+                }
+
+                // Nhóm theo category
+                const grouped = {};
+                products.forEach(p => {
+                    const cat = p.category || 'Khác';
+                    if (!grouped[cat]) grouped[cat] = [];
+                    grouped[cat].push(p);
+                });
+
+                container.innerHTML = '';
+
+                for (const [cat, items] of Object.entries(grouped)) {
+                    const catDiv = document.createElement('div');
+                    catDiv.classList.add('product-');
+                    catDiv.innerHTML = `<h2>${cat}</h2><div class="product-grid"></div>`;
+                    const grid = catDiv.querySelector('.product-grid');
+
+                    items.forEach(p => {
+                        const img = p.primaryImage || 'https://via.placeholder.com/480x360?text=No+Image';
+                        const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price || 0);
+                        const code = p.code || p.id || p.product_id;
+                        const href = code ? `product_detail.html?code=${encodeURIComponent(code)}` : '#';
+
+                        const itemDiv = document.createElement('div');
+                        itemDiv.classList.add('product-item');
+                        itemDiv.innerHTML = `
+                            <a href="${href}">
+                                <img src="${img}" alt="${p.name}">
+                                <p>${p.name}<br><strong>${price}</strong></p>
+                            </a>
+                        `;
+                        grid.appendChild(itemDiv);
+                    });
+
+                    container.appendChild(catDiv);
+                }
+
+            } catch (err) {
+                console.error('Lỗi fetch products:', err);
+                container.innerHTML = '<p>Lỗi khi tải sản phẩm.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
