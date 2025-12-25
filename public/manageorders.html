@@ -253,26 +253,30 @@ body.has-fixed-header {
 
                 <select name="payment_method" required>
                     <option value="">Chọn PT thanh toán</option>
-                    <option value="Tiền mặt">Tiền mặt</option>
-                    <option value="Chuyển khoản">Chuyển khoản</option>
+                    <option value="cod">Tiền mặt (COD)</option>
+                    <option value="bank_transfer">Chuyển khoản</option>
+                    <option value="momo">MoMo</option>
+                    <option value="zalopay">ZaloPay</option>
                 </select>
 
                 <select name="payment_status" required>
                     <option value="">Chọn TT thanh toán</option>
-                    <option value="Chưa thanh toán">Chưa thanh toán</option>
-                    <option value="Đã thanh toán">Đã thanh toán</option>
+                    <option value="unpaid">Chưa thanh toán</option>
+                    <option value="paid">Đã thanh toán</option>
                 </select>
 
                 <input type="text" name="notes" placeholder="Ghi chú">
                 <input type="number" name="total_amount" placeholder="Tổng tiền" required>
 
+
                 <select name="status" required>
                     <option value="">Chọn trạng thái</option>
-                    <option value="Mới">Mới</option>
-                    <option value="Đang xử lý">Đang xử lý</option>
-                    <option value="Hoàn thành">Hoàn thành</option>
-                    <option value="Hủy">Hủy</option>
+                    <option value="pending">Đang xử lý</option>
+                    <option value="shipped">Đang giao</option>
+                    <option value="completed">Hoàn thành</option>
+                    <option value="cancelled">Đã hủy</option>
                 </select>
+
 
                 <div style="margin-top: 12px;">
                     <button type="submit">Thêm mới</button>
@@ -284,9 +288,36 @@ body.has-fixed-header {
 </div>
 </div>
 
+<div id="order-detail-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 700px;">
+        <div class="card-header">
+            Chi tiết đơn hàng
+            <span onclick="closeOrderDetail()">×</span>
+        </div>
+
+        <div class="card-body">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody id="order-detail-body">
+                    <tr><td colspan="5">Đang tải...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 
 
 <script>
+
     // Load header & footer nếu cần
     async function loadHTML(id, file) {
         const res = await fetch(file);
@@ -301,8 +332,27 @@ const btnShow = document.getElementById("btn-show-add-order");
 const btnClose = document.getElementById("btn-close-modal");
 const btnCancel = document.getElementById("btn-cancel-add");
 
-btnShow.onclick = () => modal.style.display = "flex";
-btnClose.onclick = btnCancel.onclick = () => modal.style.display = "none";
+const API_URL = "http://127.0.0.1:3000";
+let editingOrderId = null;
+let currentOrderId = null;
+    btnShow.onclick = () => {
+        editingOrderId = null;
+        modal.style.display = "flex";
+
+        document.getElementById("add-order-form").reset();
+        document.querySelector('[name="order_code"]').disabled = false;
+
+        document.querySelector(".modal-card .card-header").innerText =
+            "Thêm đơn hàng mới";
+    };
+
+    btnClose.onclick = btnCancel.onclick = () => {
+        modal.style.display = "none";
+        editingOrderId = null;
+
+        document.getElementById("add-order-form").reset();
+    };
+
 
 
     // ==============================
@@ -352,12 +402,18 @@ async function renderOrders() {
                 <td>${o.created_at ? o.created_at.slice(0,10) : ""}</td>
                 <td>
                     <button class="action-btn text-primary"
-                    onclick='editOrder(${o.order_id}, ${JSON.stringify(o.status)})'>
-                    <i class='bx bx-edit-alt'></i>
+                        onclick='openEditOrder(${JSON.stringify(o)})'>
+                        <i class='bx bx-edit-alt'></i>
                     </button>
+
+                    <button class="action-btn text-info"
+                        onclick="openOrderDetails(${o.order_id})">
+                        <i class='bx bx-show'></i>
+                    </button>
+
                     <button class="action-btn text-danger"
-                    onclick="deleteOrder(${o.order_id})">
-                    <i class='bx bx-trash'></i>
+                        onclick="deleteOrder(${o.order_id})">
+                        <i class='bx bx-trash'></i>
                     </button>
                 </td>
                 `;
@@ -369,36 +425,170 @@ async function renderOrders() {
     }
 }
 
-    // ==============================
-    // Sửa đơn hàng (chỉ sửa status)
-    // ==============================
-    async function editOrder(id, oldStatus) {
-        const newStatus = prompt("Cập nhật trạng thái:", oldStatus);
-        if (!newStatus || newStatus === oldStatus) return;  
 
-        await fetch(`/api/manageorders/${id}`, {
-            method: "PUT",
+
+    function openEditOrder(order) {
+    editingOrderId = order.order_id;
+    modal.style.display = "flex";
+
+    document.querySelector(".modal-card .card-header").innerText =
+        "Cập nhật đơn hàng";
+
+    const form = document.getElementById("add-order-form");
+
+    form.order_code.value = order.order_code;
+    form.shipping_name.value = order.shipping_name;
+    form.phone.value = order.phone;
+    form.address.value = order.address;
+
+    // QUAN TRỌNG
+    form.payment_method.value = order.payment_method;
+    form.payment_status.value = order.payment_status;
+    form.status.value = order.status;
+
+    form.notes.value = order.notes || "";
+    form.total_amount.value = order.total_amount;
+}
+    document.getElementById("add-order-form").addEventListener("submit", async e => {
+        e.preventDefault();
+
+        const form = e.target;
+        const data = Object.fromEntries(new FormData(form));
+
+        const url = editingOrderId
+            ? `${API_URL}/api/manageorders/${editingOrderId}`
+            : `${API_URL}/api/manageorders`;
+
+        const method = editingOrderId ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+            method,
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify({ status: newStatus })
+            body: JSON.stringify(data)
         });
 
+        if (!res.ok) {
+            alert("Có lỗi xảy ra");
+            return;
+        }
+
+        modal.style.display = "none";
+        editingOrderId = null;
+        form.reset();
         renderOrders();
+    });
+
+    async function openOrderDetails(orderId) {
+    currentOrderId = orderId;
+    const modal = document.getElementById("order-detail-modal");
+    const tbody = document.getElementById("order-detail-body");
+
+    modal.style.display = "flex";
+    tbody.innerHTML = "<tr><td colspan='5'>Đang tải...</td></tr>";
+
+    try {
+        const res = await fetch(
+            `http://127.0.0.1:3000/api/manageorders/${orderId}/details`,
+            { credentials: "include" }
+        );
+
+        if (!res.ok) throw new Error("Lỗi tải chi tiết");
+
+        const items = await res.json();
+
+        if (!items.length) {
+            tbody.innerHTML = "<tr><td colspan='5'>Đơn hàng trống</td></tr>";
+            return;
+        }
+
+    tbody.innerHTML = "";
+    items.forEach(i => {
+        const total = i.quantity * i.price;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${i.order_item_id}</td>
+
+                <td>${i.product_name}</td>
+
+                <td>
+                    <input type="number"
+                        class="input-qty"
+                        min="1"
+                        value="${i.quantity}"
+                        style="width:70px"
+                        onchange="updateOrderItemFromRow(this, ${i.order_item_id})">
+                </td>
+
+                <td>
+                    <input type="number"
+                        class="input-price"
+                        min="0"
+                        value="${i.price}"
+                        style="width:100px"
+                        onchange="updateOrderItemFromRow(this, ${i.order_item_id})">
+                </td>
+
+                <td>${Number(total).toLocaleString()}</td>
+            </tr>
+        `;
+    });
+
+
+    } catch (err) {
+        console.error(err);
+        tbody.innerHTML = "<tr><td colspan='5'>Lỗi tải dữ liệu</td></tr>";
     }
+}
+
+function closeOrderDetail() {
+    document.getElementById("order-detail-modal").style.display = "none";
+}
+
+async function updateOrderItemFromRow(el, itemId) {
+    const row = el.closest("tr");
+
+    const quantity = row.querySelector(".input-qty").value;
+    const price = row.querySelector(".input-price").value;
+
+    try {
+        const res = await fetch(
+            `http://127.0.0.1:3000/api/manageorders/item/${itemId}`,
+            {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    quantity: Number(quantity),
+                    price: Number(price)
+                })
+            }
+        );
+
+        if (!res.ok) throw new Error();
+
+        // reload lại chi tiết & bảng
+        openOrderDetails(currentOrderId);
+        renderOrders();
+    } catch (err) {
+        alert("Cập nhật thất bại");
+    }
+}
 
     // ==============================
     // Xóa đơn hàng
     // ==============================
-    async function deleteOrder(id) {
-        if (!confirm("Xóa đơn hàng ID " + id + "?")) return;
+async function deleteOrder(id) {
+    if (!confirm("Xóa đơn hàng ID " + id + "?")) return;
 
-        await fetch(`/api/manageorders/${id}`, {
-            method: "DELETE",
-            credentials: "include"
-        });
+    await fetch(`http://127.0.0.1:3000/api/manageorders/${id}`, {
+        method: "DELETE",
+        credentials: "include"
+    });
+    renderOrders();
+}
 
-        renderOrders();
-    }
     // Load danh sách
     renderOrders();
 </script>

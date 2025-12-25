@@ -126,19 +126,23 @@ table.admin-table .spinner-border {
     </div>
   </div>
 
-  <div class="card shadow mb-4">
-  <div class="card-header">
+<div class="card shadow mb-4">
+  <!-- <div class="card-header">
     Thêm người dùng mới
-  </div>
+  </div> -->
   <div class="card-body">
     <form id="add-user-form">
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <!-- <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <input type="text" name="username" placeholder="Username" required />
         <input type="email" name="email" placeholder="Email" required />
-        <input type="text" name="role" placeholder="Role" required />
+        <select name="role" required>
+          <option value="">Chọn quyền</option>
+          <option value="admin">Quản trị viên</option>
+          <option value="customer">Khách hàng</option>
+        </select>
         <input type="password" name="password" placeholder="Password" required />
         <button type="submit">Thêm mới</button>
-      </div>
+      </div> -->
     </form>
   </div>
 </div>
@@ -164,6 +168,69 @@ table.admin-table .spinner-border {
     loadHTML("header-placeholder", "component/header-ad.html", () => {
       document.body.classList.add("has-fixed-header");
     });
+
+    async function editUser(id, username, email, role) {
+        const newUsername = prompt("Username:", username);
+        const newEmail = prompt("Email:", email);
+        const newRole = prompt("Role:", role);
+
+        if (!newUsername || !newEmail || !newRole) return;
+
+        try {
+            const res = await fetch(`${API_URL}/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: newUsername,
+                    email: newEmail,
+                    role: newRole
+                })
+            });
+
+            const result = await res.json();
+            if (!res.ok) throw new Error(result.message);
+
+            alert("Cập nhật thành công");
+            loadUsers();
+
+        } catch (err) {
+            alert(err.message || "Lỗi server");
+        }
+    }
+    document.getElementById("add-user-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+        username: e.target.username.value.trim(),
+        email: e.target.email.value.trim(),
+        role: e.target.role.value.trim(),
+        password: e.target.password.value.trim()
+    };
+
+    try {
+        const res = await fetch(`${API_URL}/add`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) throw new Error(result.message);
+
+        alert("Thêm user thành công");
+        e.target.reset();
+        loadUsers();
+
+    } catch (err) {
+        console.error(err);
+        alert(err.message || "Lỗi server");
+    }
+});
 
     // loadHTML("footer-placeholder", "component/footer.html");
   </script>

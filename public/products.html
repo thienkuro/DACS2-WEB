@@ -11,6 +11,12 @@
         .product- { margin-bottom: 40px; }
         .product- h2 { margin-bottom: 15px; }
         .product-grid { display: flex; flex-wrap: wrap; gap: 15px; }
+        .product-card img {
+            width: 100%;
+            height: 200px;          /* 🔥 KHÓA CHIỀU CAO */
+            object-fit: contain;   /* giữ tỉ lệ ảnh */
+            margin-bottom: 10px;
+        }
         .product-item { flex: 0 0 calc(25% - 15px); border: 1px solid #ccc; padding: 10px; text-align: center; }
         .product-item img { width: 100%; height: auto; object-fit: contain; }
         .product-item p { margin-top: 8px; font-size: 14px; }
@@ -56,59 +62,73 @@
             container.innerHTML = '<p>Đang tải...</p>';
 
             try {
-                const res = await fetch(`http://127.0.0.1:3000/api/products/search`);
+                let apiUrl;
+
+                if (q) {
+                    apiUrl = `http://127.0.0.1:3000/api/products/by-category/${encodeURIComponent(q)}`;
+                } else {
+                    apiUrl = `http://127.0.0.1:3000/api/products`;
+                }
+
+                const res = await fetch(apiUrl);
                 const data = await res.json();
                 let products = data.products || [];
-
-                // Lọc theo từ khóa (tên + category)
-                if (q) {
-                    const term = q.toLowerCase();
-                    products = products.filter(p =>
-                        p.name.toLowerCase().includes(term) ||
-                        (p.category && p.category.toLowerCase().includes(term))
-                    );
-                }
 
                 if (!products.length) {
                     container.innerHTML = '<p>Không tìm thấy sản phẩm nào.</p>';
                     return;
                 }
 
-                // Nhóm theo category
-                const grouped = {};
-                products.forEach(p => {
-                    const cat = p.category || 'Khác';
-                    if (!grouped[cat]) grouped[cat] = [];
-                    grouped[cat].push(p);
-                });
-
                 container.innerHTML = '';
 
-                for (const [cat, items] of Object.entries(grouped)) {
-                    const catDiv = document.createElement('div');
-                    catDiv.classList.add('product-');
-                    catDiv.innerHTML = `<h2>${cat}</h2><div class="product-grid"></div>`;
-                    const grid = catDiv.querySelector('.product-grid');
+            container.innerHTML = '';
 
-                    items.forEach(p => {
-                        const img = p.primaryImage || 'https://via.placeholder.com/480x360?text=No+Image';
-                        const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price || 0);
-                        const code = p.code || p.id || p.product_id;
-                        const href = code ? `product_detail.html?code=${encodeURIComponent(code)}` : '#';
+// Nhóm theo category_id hoặc category_name
+const grouped = {};
 
-                        const itemDiv = document.createElement('div');
-                        itemDiv.classList.add('product-item');
-                        itemDiv.innerHTML = `
-                            <a href="${href}">
-                                <img src="${img}" alt="${p.name}">
-                                <p>${p.name}<br><strong>${price}</strong></p>
-                            </a>
-                        `;
-                        grid.appendChild(itemDiv);
-                    });
+products.forEach(p => {
+    const cat = p.category_name || 'Khác';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(p);
+});
 
-                    container.appendChild(catDiv);
-                }
+container.innerHTML = '';
+
+for (const [catName, items] of Object.entries(grouped)) {
+    const section = document.createElement('section');
+    section.className = 'category-block';
+
+    section.innerHTML = `
+        <h2>${catName}</h2>
+        <div class="product-grid"></div>
+    `;
+
+    const grid = section.querySelector('.product-grid');
+
+    items.forEach(p => {
+        const price = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(p.price);
+
+        const card = document.createElement('div');
+        card.className = 'product-card';
+
+        
+        card.innerHTML = `
+            <a href="product.html?code=${p.product_code}">
+                <img src="${p.primaryImage}">
+                <h3>${p.name}</h3>
+                <p class="price">${price}</p>
+            </a>
+        `;
+
+        grid.appendChild(card);
+    });
+
+    container.appendChild(section);
+}
+
 
             } catch (err) {
                 console.error('Lỗi fetch products:', err);

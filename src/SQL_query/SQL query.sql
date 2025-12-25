@@ -324,3 +324,6 @@ WHERE c.name IN ('Case', 'Máy');
 SELECT * FROM orders;
 
 SELECT * FROM orderitems;
+
+ALTER TABLE orders
+MODIFY user_id INT NULL;

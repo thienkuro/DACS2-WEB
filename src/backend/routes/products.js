@@ -129,69 +129,72 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-/* ==========================  
-   SEARCH /api/products/search?q=
-==========================*/
-router.get('/search', async (req, res) => {
+
+router.get("/search", async (req, res) => {
     const q = req.query.q;
-    if (!q) return res.status(400).json({ error: "Missing query" });
+    if (!q) return res.json({ products: [] });
 
-    const conn = await pool.getConnection();
     try {
-        const [rows] = await conn.query(
-            `SELECT p.product_id, p.product_code, p.name, p.description, p.price,
-                    p.category_id, c.name AS category, i.quantity, p.refresh_rate
-             FROM Products p
-             LEFT JOIN Categories c ON p.category_id = c.category_id
-             LEFT JOIN Inventory i ON p.product_id = i.product_id
-             WHERE p.name LIKE ?
-             ORDER BY p.product_id ASC`,
-            [`%${q}%`]
-        );
+        const [rows] = await pool.query(`
+            SELECT 
+                p.*,
+                c.name AS category_name
+            FROM products p
+            JOIN categories c ON p.category_id = c.category_id
+            WHERE 
+                p.name COLLATE utf8mb4_unicode_ci LIKE ?
+                OR c.name COLLATE utf8mb4_unicode_ci LIKE ?
+            ORDER BY p.created_at DESC
+        `, [`%${q}%`, `%${q}%`]);
 
-        if (!rows.length)
-            return res.json({ products: [] });
-
-        const ids = rows.map(r => r.product_id);
-
-        const [images] = await conn.query(
-            `SELECT image_id, product_id, type, url
-             FROM ProductImages
-             WHERE product_id IN (?)
-             ORDER BY image_id ASC`,
-            [ids]
-        );
-
-        let map = {};
-        images.forEach(img => {
-            if (!map[img.product_id]) map[img.product_id] = [];
-            map[img.product_id].push(img);
-        });
-
-        const products = rows.map(r => {
-            const imgs = map[r.product_id] || [];
-            return {
-                id: r.product_id,
-                code: r.product_code,
-                name: r.name,
-                description: r.description,
-                price: Number(r.price),
-                categoryId: r.category_id,
-                category: r.category,
-                quantity: r.quantity ?? 0,
-                refreshRate: r.refresh_rate,
-                images: imgs,
-                primaryImage: imgs[0]?.url || null
-            };
-        });
-
-        res.json({ products });
-
+        res.json({ products: rows });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Server error" });
-    } finally {
-        conn.release();
+    }
+});
+
+// GET /api/products/by-category/:name
+router.get("/by-category/:name", async (req, res) => {
+    const { name } = req.params;
+
+    try {
+        // 1. Lấy category_id
+        const [[category]] = await pool.query(`
+            SELECT category_id, name
+            FROM categories
+            WHERE name COLLATE utf8mb4_unicode_ci = ?
+        `, [name]);
+
+        if (!category) {
+            return res.json({ products: [] });
+        }
+
+        // 2. Lấy sản phẩm + ảnh chính
+        const [products] = await pool.query(`
+            SELECT 
+                p.*,
+                c.name AS category_name,
+                pi.url AS primaryImage
+            FROM products p
+            JOIN categories c 
+                ON p.category_id = c.category_id
+            LEFT JOIN productimages pi
+            ON pi.image_id = (
+                SELECT image_id
+                FROM productimages
+                WHERE product_id = p.product_id
+                ORDER BY image_id ASC
+                LIMIT 1
+            )
+            WHERE p.category_id = ?
+            ORDER BY p.created_at DESC
+        `, [category.category_id]);
+
+        res.json({ products });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Lỗi server" });
     }
 });
 
@@ -411,5 +414,7 @@ router.post('/', async (req, res) => {
         conn.release();
     }
 });
+
+
 
 module.exports = router;

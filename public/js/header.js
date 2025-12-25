@@ -298,6 +298,21 @@ class HeaderManager {
     }
 }
 
+const searchForm = document.getElementById("searchForm");
+const searchInput = document.getElementById("searchInput");
+
+if (searchForm && searchInput) {
+    searchForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const q = searchInput.value.trim();
+        if (!q) return;
+
+        window.location.href = `search.html?q=${encodeURIComponent(q)}`;
+    });
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     window.headerManager = new HeaderManager();
     // Cập nhật badge (nếu Cart đã load)
